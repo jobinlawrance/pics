@@ -22,13 +22,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestCompile("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.0.2'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    testCompile "junit:junit:${versions.junit}"
+
+    compile "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    compile "com.android.support.constraint:constraint-layout:${versions.constrainLayout}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
 }
 repositories {
     mavenCentral()
