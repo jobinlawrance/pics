@@ -5,6 +5,11 @@ buildscript {
             'kotlin'         : '1.1.4-3',
             'constrainLayout': '1.0.2',
             'supportLibrary' : '26.0.2',
+            'glide'          : '4.0.0',
+            'retrofit'       : '2.3.0',
+            'dagger'         : '2.11',
+            'rxjava'         : '2.1.3',
+            'mosby'          : '3.0.4',
 
             //testing
             'junit'          : '4.12',
