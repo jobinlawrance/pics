@@ -10,6 +10,7 @@ buildscript {
             'dagger'         : '2.11',
             'rxjava'         : '2.1.3',
             'mosby'          : '3.0.4',
+            'timber'         : '4.5.1',
 
             //testing
             'junit'          : '4.12',
