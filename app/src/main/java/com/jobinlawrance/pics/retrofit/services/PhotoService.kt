@@ -1,7 +1,7 @@
 package com.jobinlawrance.pics.retrofit.services
 
 import com.jobinlawrance.pics.retrofit.data.PhotoResponse
-import io.reactivex.Single
+import io.reactivex.Observable
 import retrofit2.http.GET
 
 /**
@@ -9,5 +9,5 @@ import retrofit2.http.GET
  */
 interface PhotoService {
     @GET("photos")
-    fun getPhotos(): Single<List<PhotoResponse>>
+    fun getPhotos(): Observable<List<PhotoResponse>>
 }
