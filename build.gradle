@@ -16,7 +16,11 @@ buildscript {
 
             //testing
             'junit'          : '4.12',
-            'espresso'       : '2.2.2'
+            'espresso'       : '2.2.2',
+            'mockito'        : '2.9.0',
+            'mockitoKotlin'  : '1.5.0',
+            'daggerMock'     : '0.7.0',
+            'okHttp'         : '3.9.0'
     ]
     repositories {
         jcenter()
@@ -36,6 +40,7 @@ allprojects {
         maven {
             url "https://maven.google.com"
         }
+        maven { url "https://jitpack.io" }
     }
 }
 
