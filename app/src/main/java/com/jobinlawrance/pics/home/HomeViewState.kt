@@ -1,11 +1,12 @@
 package com.jobinlawrance.pics.home
 
 import com.jobinlawrance.pics.retrofit.data.PhotoResponse
+import java.util.*
 
 /**
  * Created by jobinlawrance on 7/9/17.
  */
-data class HomeViewState private constructor(
+class HomeViewState private constructor(
         val loadingFirstPage: Boolean,
         val firstPageError: Throwable?,
         val data: List<PhotoResponse>
@@ -14,7 +15,7 @@ data class HomeViewState private constructor(
 
     class Builder(var loadingFirstPage: Boolean = false,
                   var firstPageError: Throwable? = null,
-                  var data: List<PhotoResponse> = emptyList()) {
+                  var data: List<PhotoResponse> = Collections.emptyList()) {
 
         constructor(toCopyFrom: HomeViewState) : this(toCopyFrom.loadingFirstPage, toCopyFrom.firstPageError, toCopyFrom.data)
 
@@ -38,4 +39,27 @@ data class HomeViewState private constructor(
                 "\n data = $data" +
                 "\n}"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        val that = other as HomeViewState
+
+        if (loadingFirstPage != that.loadingFirstPage) return false
+
+        if (firstPageError?.javaClass != that.firstPageError?.javaClass) return false
+
+        return data.equals(other.data)
+
+    }
+
+    override fun hashCode(): Int {
+        var result = loadingFirstPage.hashCode()
+        result = 31 * result + (firstPageError?.hashCode() ?: 0)
+        result = 31 * result + data.hashCode()
+        return result
+    }
+
+
 }
