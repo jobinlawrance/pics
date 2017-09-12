@@ -24,7 +24,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         homeAdapter = HomeAdapter()
-        gridLayoutManager = GridLayoutManager(activity, 1)
+        gridLayoutManager = GridLayoutManager(activity, resources.getInteger(R.integer.grid_span_size))
 
         return container?.inflate(R.layout.fragment_home)
     }
