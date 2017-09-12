@@ -38,9 +38,15 @@ dependencies {
     testCompile "com.squareup.okhttp3:mockwebserver:${versions.okHttp}"
 
     compile "com.android.support:appcompat-v7:${versions.supportLibrary}"
+    compile "com.android.support:recyclerview-v7:${versions.supportLibrary}"
     compile "com.android.support.constraint:constraint-layout:${versions.constrainLayout}"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
     compile "com.github.bumptech.glide:glide:${versions.glide}"
+    compile "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+    compile("com.github.bumptech.glide:recyclerview-integration:${versions.glide}") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
     compile "com.squareup.okhttp3:okhttp:${versions.okHttp}"
     compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     compile "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
@@ -54,6 +60,7 @@ dependencies {
     compile "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
 }
 repositories {
     mavenCentral()
