@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.MyApplication
-import com.jobinlawrance.pics.extras.Utils.Companion.inflate
 import com.jobinlawrance.pics.home.dagger.DaggerHomeComponent
 import com.jobinlawrance.pics.utils.getActionBarSize
+import com.jobinlawrance.pics.utils.inflate
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_home.*
 import timber.log.Timber

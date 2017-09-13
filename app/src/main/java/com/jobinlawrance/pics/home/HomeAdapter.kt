@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.jobinlawrance.pics.R
-import com.jobinlawrance.pics.extras.Utils.Companion.inflate
 import com.jobinlawrance.pics.retrofit.data.PhotoResponse
+import com.jobinlawrance.pics.utils.inflate
 import kotlinx.android.synthetic.main.home_viewholder.view.*
 
 /**
