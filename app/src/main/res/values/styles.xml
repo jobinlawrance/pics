@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Pics" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:windowBackground">@color/primary_dark</item>
@@ -12,6 +12,15 @@
         <item name="android:textColorSecondary">@color/text_secondary_light</item>
         <item name="android:textColorTertiary">@color/text_secondary_light</item>
         <item name="android:textColorHint">@color/text_hint_light</item>
+    </style>
+
+    <style name="Pics.Home">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@color/immersive_bars</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <style name="Widget.Pics" parent="android:Widget" />
@@ -31,7 +40,8 @@
     </style>
 
     <style name="Widget.Pics.HomeToolbar" parent="Widget.Pics.Toolbar.SmallCapsTitle">
-        <item name="android:background">@color/primary_dark</item>
+        <item name="android:background">@null</item>
+        <item name="android:theme">@android:style/ThemeOverlay.Material.Dark</item>
     </style>
 
     <style name="PicsDarkOverlay" parent="@android:style/ThemeOverlay.Material.Dark.ActionBar">

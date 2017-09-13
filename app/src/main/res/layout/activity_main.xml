@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.jobinlawrance.pics.extras.WindowInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jobinlawrance.pics.MainActivity">
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    tools:context="com.jobinlawrance.pics.MainActivity" />
 
-    <Toolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.Pics.HomeToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
-        android:title="@string/app_name" />
-
-</LinearLayout>

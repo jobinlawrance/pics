@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.jobinlawrance.pics.extras.WindowInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowInsetFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:elevation="1dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical" />
+
+    <Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.Pics.HomeToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:elevation="1dp"
+        android:title="@string/app_name" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -12,9 +30,4 @@
         android:indeterminateTint="?android:colorAccent"
         android:visibility="gone"
         tools:visibility="visible" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</FrameLayout>
+</com.jobinlawrance.pics.extras.WindowInsetsFrameLayout>

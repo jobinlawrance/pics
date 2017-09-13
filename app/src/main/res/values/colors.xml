@@ -11,4 +11,7 @@
     <color name="text_primary_light">#ffffffff</color>
     <color name="text_secondary_light">#b3ffffff</color> <!-- 70% -->
     <color name="text_hint_light">#7Fffffff</color> <!-- 50% -->
+
+    <!--Common Colors-->
+    <color name="immersive_bars">#99000000</color>
 </resources>
