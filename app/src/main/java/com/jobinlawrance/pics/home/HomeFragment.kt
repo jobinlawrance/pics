@@ -1,11 +1,19 @@
 package com.jobinlawrance.pics.home
 
+import android.accounts.NetworkErrorException
+import android.content.Context
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.MyApplication
@@ -13,8 +21,11 @@ import com.jobinlawrance.pics.home.dagger.DaggerHomeComponent
 import com.jobinlawrance.pics.utils.getActionBarSize
 import com.jobinlawrance.pics.utils.inflate
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.timeout.*
 import timber.log.Timber
+import java.net.SocketTimeoutException
 
 
 /**
@@ -26,6 +37,14 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     lateinit var homeAdapter: HomeAdapter
     lateinit var gridLayoutManager: GridLayoutManager
 
+    val loadFirstPageSubject = PublishSubject.create<Boolean>()
+    val networkStateSubject = PublishSubject.create<Boolean>()
+
+    var monitoringNetwork = false
+
+    var timeOutLayout: View? = null
+    var networkErrorLayout: ImageView? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         homeAdapter = HomeAdapter()
         gridLayoutManager = GridLayoutManager(activity, resources.getInteger(R.integer.grid_span_size))
@@ -35,7 +54,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        windowInsetFrameLayout.setOnApplyWindowInsetsListener { view, windowInsets ->
+        windowInsetFrameLayout.setOnApplyWindowInsetsListener { _, windowInsets ->
 
             // inset the toolbar down by the status bar height
             val lpToolbar = toolbar
@@ -63,6 +82,20 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
         recyclerView.addOnScrollListener(toolbarElevation)
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkConnectivity()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (monitoringNetwork) {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            connectivityManager.unregisterNetworkCallback(connectivityCallback)
+            monitoringNetwork = false
+        }
+    }
+
     override fun createPresenter(): HomeContract.Presenter {
         return DaggerHomeComponent.builder()
                 .appComponent((activity.application as MyApplication).getAppComponent())
@@ -70,7 +103,12 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
                 .providePresenter()
     }
 
-    override fun loadingFirstPageIntent(): Observable<Boolean> = Observable.just(true).doOnComplete { Timber.d("First Page Loaded") }
+    override fun loadingFirstPageIntent(): Observable<Boolean> =
+            loadFirstPageSubject
+//                    .startWith(true)
+                    .doAfterNext { Timber.d("First Page Loaded") }
+
+    override fun networkStateIntent(): Observable<Boolean> = networkStateSubject.doOnNext { Timber.d("Network state - $it") }
 
     override fun render(viewState: HomeViewState) {
         Timber.d("render : %s", viewState)
@@ -86,15 +124,81 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 
     private fun renderProgress() {
         progressBar.visibility = View.VISIBLE
+        networkErrorLayout?.visibility = View.GONE
     }
 
     private fun renderFirstPageError(throwable: Throwable) {
+        progressBar.visibility = View.GONE
+        Timber.e(throwable)
+
+        when (throwable) {
+            is NetworkErrorException -> {
+                if (networkErrorLayout == null) {
+                    networkErrorLayout = networkErrorStub.inflate() as ImageView
+                }
+
+                networkErrorLayout?.let {
+                    it.visibility = View.VISIBLE
+                    val networkAvd = context.getDrawable(R.drawable.avd_network) as AnimatedVectorDrawable
+                    it.setImageDrawable(networkAvd)
+                    networkAvd.start()
+                }
+            }
+            is SocketTimeoutException -> {
+                if (timeOutLayout == null) {
+                    timeOutLayout = timeoutViewStub.inflate()
+                }
+
+                timeOutLayout?.let {
+
+                    it.visibility = View.VISIBLE
+
+                    val timeoutAvd = context.getDrawable(R.drawable.avd_timeout) as AnimatedVectorDrawable
+                    timeoutImageView.setImageDrawable(timeoutAvd)
+                    timeoutAvd.start()
+
+                    timeOutLayout?.setOnClickListener {
+                        Timber.d("Clicked")
+                        it.visibility = View.GONE
+                        loadFirstPageSubject.onNext(true)
+                    }
+                }
+            }
+        }
 
     }
 
     private fun renderData(viewState: HomeViewState) {
         progressBar.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
         homeAdapter.setItems(viewState.data)
+    }
+
+    private fun checkConnectivity() {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+
+        val connected = activeNetworkInfo != null && activeNetworkInfo.isConnected
+        networkStateSubject.onNext(connected)
+
+        if (!connected) {
+            connectivityManager.registerNetworkCallback(
+                    NetworkRequest.Builder()
+                            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(), connectivityCallback)
+
+            monitoringNetwork = true
+        }
+    }
+
+    private val connectivityCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network?) {
+            networkStateSubject.onNext(true)
+        }
+
+        override fun onLost(network: Network?) {
+            super.onLost(network)
+            networkStateSubject.onNext(false)
+        }
     }
 
     private val toolbarElevation = object : RecyclerView.OnScrollListener() {

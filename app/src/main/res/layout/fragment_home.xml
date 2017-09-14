@@ -11,7 +11,9 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:elevation="1dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <Toolbar
         android:id="@+id/toolbar"
@@ -26,7 +28,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:clickable="true"
         android:indeterminateTint="?android:colorAccent"
         android:visibility="gone"
         tools:visibility="visible" />
+
+    <ViewStub
+        android:id="@+id/timeoutViewStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/timeout" />
+
+    <ViewStub
+        android:id="@+id/networkErrorStub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout="@layout/network_error" />
 </com.jobinlawrance.pics.extras.WindowInsetsFrameLayout>

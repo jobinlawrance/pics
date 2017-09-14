@@ -14,6 +14,8 @@ interface HomeContract {
         *  Here we define each intent as Rx Observables
         */
         fun loadingFirstPageIntent(): Observable<Boolean>
+
+        fun networkStateIntent(): Observable<Boolean>
     }
 
     interface Interactor {

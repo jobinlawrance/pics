@@ -23,6 +23,9 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
         }
 
         override fun loadingFirstPageIntent(): Observable<Boolean> = loadFirstPageSubject
+        override fun networkStateIntent(): Observable<Boolean> {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
     }
 
     init {
