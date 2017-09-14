@@ -14,4 +14,8 @@
 
     <!--Common Colors-->
     <color name="immersive_bars">#99000000</color>
+    <array name="loading_placeholders_dark">
+        <item>@color/primary_light</item>
+        <item>@color/primary</item>
+    </array>
 </resources>

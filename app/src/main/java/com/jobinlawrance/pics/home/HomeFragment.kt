@@ -46,7 +46,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     var networkErrorLayout: ImageView? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        homeAdapter = HomeAdapter()
+        homeAdapter = HomeAdapter(context)
         gridLayoutManager = GridLayoutManager(activity, resources.getInteger(R.integer.grid_span_size))
         return container?.inflate(R.layout.fragment_home)
     }
