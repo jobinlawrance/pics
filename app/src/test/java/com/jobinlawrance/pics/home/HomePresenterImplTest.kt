@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.home
 
+import android.accounts.NetworkErrorException
 import com.jobinlawrance.pics.application.DaggerAppComponent
 import com.jobinlawrance.pics.application.NetModule
 import com.jobinlawrance.pics.home.dagger.DaggerHomeComponent
@@ -67,7 +68,7 @@ class HomePresenterImplTest {
 
         val presenter =
                 DaggerHomeComponent.builder()
-                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl.toString(), HashMap())).build())
+                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
                         .build()
                         .providePresenter()
 
@@ -131,6 +132,65 @@ class HomePresenterImplTest {
 
         // Check if as expected
         robot.assertViewStateRendered(loadingFirstPageState, firstPageError)
+    }
+
+    @Test
+    fun testFirstPageNetworkState() {
+
+        mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
+
+        val presenter =
+                DaggerHomeComponent.builder()
+                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
+                        .build()
+                        .providePresenter()
+
+        val robot = HomeViewRobot(presenter)
+
+        //We are mocking a no internet state
+        robot.fireNetworkStateIntent(false)
+
+        //Then simulating an active state
+        robot.fireNetworkStateIntent(true)
+
+        val fistPageNetworkError = HomeViewState.Builder().firstPageError(NetworkErrorException()).build()
+
+        val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
+
+        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList()).build()
+
+        // Asserting the sequence in order
+        // 1. First loading
+        // 2. Then network fail
+        // 3. Then network comes back and loading comes back again
+        // 4. Then mock successful fetching of data from api
+        robot.assertViewStateRendered(firstPageLoading, fistPageNetworkError, firstPageLoading, firstPage)
+    }
+
+    @Test
+    fun testFirstPageNetworkStateChangePostFirstLoad() {
+        mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
+
+        val presenter =
+                DaggerHomeComponent.builder()
+                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
+                        .build()
+                        .providePresenter()
+
+        val robot = HomeViewRobot(presenter)
+
+
+        //Simulating an active state
+        robot.fireNetworkStateIntent(true)
+
+        //Then simulating a non active internet state
+        robot.fireNetworkStateIntent(false)
+
+        val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
+
+        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList()).build()
+
+        robot.assertViewStateRendered(firstPageLoading, firstPage)
     }
 
 }

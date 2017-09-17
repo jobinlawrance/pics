@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit
  */
 class HomeViewRobot(val presenter: HomeContract.Presenter) {
     private val loadFirstPageSubject = PublishSubject.create<Boolean>()
+    private val networkStateSubject = PublishSubject.create<Boolean>()
+
     private val renderEventSubject = ReplaySubject.create<HomeViewState>()
     private val renderEvents = CopyOnWriteArrayList<HomeViewState>()
 
@@ -23,9 +25,8 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
         }
 
         override fun loadingFirstPageIntent(): Observable<Boolean> = loadFirstPageSubject
-        override fun networkStateIntent(): Observable<Boolean> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+
+        override fun networkStateIntent(): Observable<Boolean> = networkStateSubject
     }
 
     init {
@@ -33,6 +34,8 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
     }
 
     fun fireLoadFirstPageIntent() = loadFirstPageSubject.onNext(true)
+
+    fun fireNetworkStateIntent(connected: Boolean) = networkStateSubject.onNext(connected)
 
     fun assertViewStateRendered(vararg expectedHomeViewStates: HomeViewState) {
 
