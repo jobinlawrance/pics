@@ -1,16 +1,19 @@
 package com.jobinlawrance.pics.home.dagger
 
-import com.jobinlawrance.pics.application.AppComponent
-import com.jobinlawrance.pics.extras.ActivityScope
 import com.jobinlawrance.pics.home.HomeContract
-import dagger.Component
+import com.jobinlawrance.pics.home.HomeFragment
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
 
 /**
  * Created by jobinlawrance on 7/9/17.
  */
 
-@ActivityScope
-@Component(modules = arrayOf(HomeModule::class), dependencies = arrayOf(AppComponent::class))
-interface HomeComponent {
+@Subcomponent(modules = arrayOf(HomeModule::class))
+interface HomeComponent : AndroidInjector<HomeFragment> {
+
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<HomeFragment>()
+
     fun providePresenter(): HomeContract.Presenter
 }

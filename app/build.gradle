@@ -20,6 +20,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
     }
 }
 
@@ -28,6 +31,7 @@ dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestCompile "com.google.code.findbugs:jsr305:${versions.findbugs}"
 
     testCompile "junit:junit:${versions.junit}"
     testCompile "org.mockito:mockito-core:${versions.mockito}"
@@ -52,6 +56,8 @@ dependencies {
     compile "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     compile "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     compile "com.google.dagger:dagger:${versions.dagger}"
+    compile "com.google.dagger:dagger-android:${versions.dagger}"
+    compile "com.google.dagger:dagger-android-support:${versions.dagger}"
     compile "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
     compile "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
     compile "com.hannesdorfmann.mosby3:mvi:${versions.mosby}"

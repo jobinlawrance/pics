@@ -3,8 +3,8 @@ package com.jobinlawrance.pics.home
 import android.accounts.NetworkErrorException
 import com.jobinlawrance.pics.application.DaggerAppComponent
 import com.jobinlawrance.pics.application.NetModule
-import com.jobinlawrance.pics.home.dagger.DaggerHomeComponent
 import com.jobinlawrance.pics.retrofit.mock.MockPhotoResponses
+import com.jobinlawrance.pics.retrofit.services.PhotoService
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.mockwebserver.MockResponse
@@ -18,6 +18,7 @@ import java.net.ConnectException
 class HomePresenterImplTest {
     lateinit var mockWebServer: MockWebServer
     lateinit var baseUrl: String
+    lateinit var presenter: HomePresenterImpl
 
     companion object {
 
@@ -50,6 +51,15 @@ class HomePresenterImplTest {
         mockWebServer.start()
 
         baseUrl = mockWebServer.url("").toString()
+
+        val mockRetrofit =
+                DaggerAppComponent.builder()
+                        .netModule(NetModule(baseUrl, HashMap()))
+                        .build()
+                        .getRetrofit()
+        val mockPhotoService = mockRetrofit.create(PhotoService::class.java)
+
+        presenter = HomePresenterImpl(HomeInteractorImpl(mockPhotoService))
     }
 
     @After
@@ -66,11 +76,6 @@ class HomePresenterImplTest {
     fun testLoadingPage() {
         mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
 
-        val presenter =
-                DaggerHomeComponent.builder()
-                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
-                        .build()
-                        .providePresenter()
 
         val robot = HomeViewRobot(presenter)
 
@@ -97,12 +102,6 @@ class HomePresenterImplTest {
         // Prepare mock server to deliver mock response on incoming http request
         //
         mockWebServer.shutdown()
-
-        val presenter =
-                DaggerHomeComponent.builder()
-                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
-                        .build()
-                        .providePresenter()
 
         val robot = HomeViewRobot(presenter)
 
@@ -139,12 +138,6 @@ class HomePresenterImplTest {
 
         mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
 
-        val presenter =
-                DaggerHomeComponent.builder()
-                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
-                        .build()
-                        .providePresenter()
-
         val robot = HomeViewRobot(presenter)
 
         //We are mocking a no internet state
@@ -170,12 +163,6 @@ class HomePresenterImplTest {
     @Test
     fun testFirstPageNetworkStateChangePostFirstLoad() {
         mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
-
-        val presenter =
-                DaggerHomeComponent.builder()
-                        .appComponent(DaggerAppComponent.builder().netModule(NetModule(baseUrl, HashMap())).build())
-                        .build()
-                        .providePresenter()
 
         val robot = HomeViewRobot(presenter)
 

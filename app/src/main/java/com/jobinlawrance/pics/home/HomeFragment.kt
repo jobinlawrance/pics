@@ -16,16 +16,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
-import com.jobinlawrance.pics.application.MyApplication
-import com.jobinlawrance.pics.home.dagger.DaggerHomeComponent
 import com.jobinlawrance.pics.utils.getActionBarSize
 import com.jobinlawrance.pics.utils.inflate
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.timeout.*
 import timber.log.Timber
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
 
 /**
@@ -44,6 +44,9 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 
     var timeOutLayout: View? = null
     var networkErrorLayout: ImageView? = null
+
+    @Inject
+    lateinit var presenter: HomeContract.Presenter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         homeAdapter = HomeAdapter(context)
@@ -97,10 +100,8 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     }
 
     override fun createPresenter(): HomeContract.Presenter {
-        return DaggerHomeComponent.builder()
-                .appComponent((activity.application as MyApplication).getAppComponent())
-                .build()
-                .providePresenter()
+        AndroidSupportInjection.inject(this)
+        return presenter
     }
 
     override fun loadingFirstPageIntent(): Observable<Boolean> =

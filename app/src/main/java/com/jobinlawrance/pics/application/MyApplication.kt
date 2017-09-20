@@ -1,18 +1,24 @@
 package com.jobinlawrance.pics.application
 
 import android.app.Application
+import android.support.v4.app.Fragment
 import com.facebook.stetho.Stetho
 import com.jobinlawrance.pics.BuildConfig
 import com.jobinlawrance.pics.R
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Created by jobinlawrance on 5/9/17.
  */
-class MyApplication : Application() {
+class MyApplication : Application(), HasSupportFragmentInjector {
 
     private lateinit var appComponent: AppComponent
-
+    @Inject
+    lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
 
     private val baseUrl = "https://api.unsplash.com/"
     private lateinit var headers: HashMap<String, String>
@@ -39,7 +45,11 @@ class MyApplication : Application() {
         appComponent = DaggerAppComponent.builder()
                 .netModule(NetModule(baseUrl, headers))
                 .build()
+
+        appComponent.inject(this)
     }
 
     fun getAppComponent() = appComponent
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
 }
