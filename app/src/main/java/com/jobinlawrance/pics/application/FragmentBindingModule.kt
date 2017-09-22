@@ -1,24 +1,23 @@
 package com.jobinlawrance.pics.application
 
-import android.support.v4.app.Fragment
+import com.jobinlawrance.pics.di.fragment.FragmentComponentBuilder
+import com.jobinlawrance.pics.di.fragment.FragmentKey
 import com.jobinlawrance.pics.home.HomeFragment
 import com.jobinlawrance.pics.home.dagger.HomeComponent
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
-import dagger.android.support.FragmentKey
 import dagger.multibindings.IntoMap
 
 /**
  * Created by jobinlawrance on 20/9/17.
  */
 
-@Module
-abstract class PicsFragmentInjectorModule {
+@Module(subcomponents = arrayOf(HomeComponent::class))
+abstract class FragmentBindingModule {
 
     @Binds
     @IntoMap
     @FragmentKey(HomeFragment::class)
-    abstract fun bindHomeFragmentInjectorFactory(builder: HomeComponent.Builder): AndroidInjector.Factory<out Fragment>
+    abstract fun homeFragmentComponentBuilder(builder: HomeComponent.Builder): FragmentComponentBuilder<*, *>
 
 }

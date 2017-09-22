@@ -16,9 +16,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
+import com.jobinlawrance.pics.application.MyApplication
+import com.jobinlawrance.pics.home.dagger.HomeComponent
+import com.jobinlawrance.pics.home.dagger.HomeModule
 import com.jobinlawrance.pics.utils.getActionBarSize
 import com.jobinlawrance.pics.utils.inflate
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -100,7 +102,8 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     }
 
     override fun createPresenter(): HomeContract.Presenter {
-        AndroidSupportInjection.inject(this)
+        (MyApplication.getInstance().getFragmentComponentBuilder(HomeFragment::class.java) as HomeComponent.Builder)
+                .fragmentModule(HomeModule(this)).build().injectMembers(this)
         return presenter
     }
 

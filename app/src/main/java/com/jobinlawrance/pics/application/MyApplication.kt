@@ -5,20 +5,21 @@ import android.support.v4.app.Fragment
 import com.facebook.stetho.Stetho
 import com.jobinlawrance.pics.BuildConfig
 import com.jobinlawrance.pics.R
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import com.jobinlawrance.pics.di.fragment.FragmentComponentBuilder
+import com.jobinlawrance.pics.di.fragment.HasFragmentSubcomponentBuilders
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * Created by jobinlawrance on 5/9/17.
  */
-class MyApplication : Application(), HasSupportFragmentInjector {
+class MyApplication : Application(), HasFragmentSubcomponentBuilders {
 
     private lateinit var appComponent: AppComponent
+
     @Inject
-    lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
+    lateinit var fragmentComponentBuilders: Map<Class<out Fragment>, @JvmSuppressWildcards Provider<FragmentComponentBuilder<*, *>>>
 
     private val baseUrl = "https://api.unsplash.com/"
     private lateinit var headers: HashMap<String, String>
@@ -51,5 +52,7 @@ class MyApplication : Application(), HasSupportFragmentInjector {
 
     fun getAppComponent() = appComponent
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingFragmentInjector
+    override fun getFragmentComponentBuilder(fragmentClass: Class<out Fragment>): FragmentComponentBuilder<*, *>
+            = fragmentComponentBuilders.get(fragmentClass)!!.get()
+
 }

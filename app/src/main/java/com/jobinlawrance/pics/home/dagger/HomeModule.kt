@@ -1,6 +1,8 @@
 package com.jobinlawrance.pics.home.dagger
 
+import com.jobinlawrance.pics.di.fragment.FragmentModule
 import com.jobinlawrance.pics.home.HomeContract
+import com.jobinlawrance.pics.home.HomeFragment
 import com.jobinlawrance.pics.home.HomeInteractorImpl
 import com.jobinlawrance.pics.home.HomePresenterImpl
 import com.jobinlawrance.pics.retrofit.services.PhotoService
@@ -13,7 +15,7 @@ import retrofit2.Retrofit
  */
 
 @Module
-class HomeModule {
+class HomeModule(homeFragment: HomeFragment) : FragmentModule<HomeFragment>(homeFragment) {
 
     @Provides
     fun provideInteractor(retrofit: Retrofit): HomeContract.Interactor
