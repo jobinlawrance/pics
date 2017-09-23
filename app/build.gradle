@@ -13,7 +13,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.jobinlawrance.pics.PicsTestRunner"
     }
     buildTypes {
         release {
@@ -28,10 +28,15 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
-        exclude group: 'com.android.support', module: 'support-annotations'
+
+    androidTestCompile "com.android.support:support-annotations:${versions.supportLibrary}"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestCompile "com.android.support.test:runner:${versions.supportTest}"
+    androidTestCompile "com.android.support.test:rules:${versions.supportTest}"
+    androidTestCompile "org.mockito:mockito-android:${versions.mockito}"
+    androidTestCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}", {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })
-    androidTestCompile "com.google.code.findbugs:jsr305:${versions.findbugs}"
 
     testCompile "junit:junit:${versions.junit}"
     testCompile "org.mockito:mockito-core:${versions.mockito}"
@@ -56,8 +61,6 @@ dependencies {
     compile "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     compile "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
     compile "com.google.dagger:dagger:${versions.dagger}"
-    compile "com.google.dagger:dagger-android:${versions.dagger}"
-    compile "com.google.dagger:dagger-android-support:${versions.dagger}"
     compile "io.reactivex.rxjava2:rxjava:${versions.rxjava}"
     compile "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"
     compile "com.hannesdorfmann.mosby3:mvi:${versions.mosby}"
@@ -67,6 +70,8 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+
+    kaptAndroidTest "com.google.dagger:dagger-compiler:${versions.dagger}"
 }
 repositories {
     mavenCentral()

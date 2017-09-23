@@ -14,7 +14,7 @@ import javax.inject.Provider
 /**
  * Created by jobinlawrance on 5/9/17.
  */
-class MyApplication : Application(), HasFragmentSubcomponentBuilders {
+open class MyApplication : Application(), HasFragmentSubcomponentBuilders {
 
     private lateinit var appComponent: AppComponent
 
