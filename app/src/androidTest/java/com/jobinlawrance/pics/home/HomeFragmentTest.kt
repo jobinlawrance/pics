@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.home
 
+import android.accounts.NetworkErrorException
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
@@ -15,11 +16,13 @@ import com.jobinlawrance.pics.home.dagger.HomeComponent
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnit
+import java.net.SocketTimeoutException
 
 
 /**
@@ -36,7 +39,7 @@ class HomeFragmentTest {
 
     var builder: HomeComponent.Builder = mock()
 
-    var presenterRobot = HomePresenterRobot()
+    lateinit var presenterRobot: HomePresenterRobot
 
     private val homeFragmentComponent = object : HomeComponent {
         override fun injectMembers(instance: HomeFragment?) {
@@ -53,13 +56,41 @@ class HomeFragmentTest {
         val testApplication = InstrumentationRegistry.getTargetContext().applicationContext as MyTestApplication
         testApplication.putFragmentComponentBuilder(builder, HomeFragment::class.java)
 
+        presenterRobot = HomePresenterRobot()
     }
 
     @Test
     @Throws(Exception::class)
-    fun testLoadingProgressBar() {
+    fun render_firstPageLoading() {
         activityRule.launchActivity(Intent())
         activityRule.runOnUiThread(Runnable { presenterRobot.customRender(HomeViewState.Builder().firstPageLoading(true).build()) })
         onView(withId(R.id.progressBar)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun render_firstPageTimeOutException() {
+        activityRule.launchActivity(Intent())
+        activityRule.runOnUiThread({
+            presenterRobot.customRender(HomeViewState.Builder().firstPageError(SocketTimeoutException()).build())
+        })
+
+        //assert that progressBar is hidden
+        onView(withId(R.id.progressBar)).check(matches(not(isDisplayed())))
+        //check for the timeout image drawable
+        onView(withId(R.id.timeoutImageView)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun render_firstPageNetworkException() {
+        activityRule.launchActivity(Intent())
+        activityRule.runOnUiThread({
+            presenterRobot.customRender(HomeViewState.Builder().firstPageError(NetworkErrorException()).build())
+        })
+        //assert that progressBar is hidden
+        onView(withId(R.id.progressBar)).check(matches(not(isDisplayed())))
+        //check for the network image drawable
+        onView(withId(R.id.networkImage)).check(matches(isDisplayed()))
     }
 }
