@@ -7,9 +7,8 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import com.jobinlawrance.pics.MainActivity
+import com.jobinlawrance.pics.FragmentTestRule
 import com.jobinlawrance.pics.MyTestApplication
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.home.dagger.HomeComponent
@@ -35,7 +34,7 @@ class HomeFragmentTest {
     var mockitoRule = MockitoJUnit.rule()
 
     @get:Rule
-    var activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java, true, false)
+    var fragmentRule = FragmentTestRule<HomeFragment>(HomeFragment::class.java)
 
     var builder: HomeComponent.Builder = mock()
 
@@ -62,16 +61,16 @@ class HomeFragmentTest {
     @Test
     @Throws(Exception::class)
     fun render_firstPageLoading() {
-        activityRule.launchActivity(Intent())
-        activityRule.runOnUiThread(Runnable { presenterRobot.customRender(HomeViewState.Builder().firstPageLoading(true).build()) })
+        fragmentRule.launchActivity(null)
+        fragmentRule.runOnUiThread(Runnable { presenterRobot.customRender(HomeViewState.Builder().firstPageLoading(true).build()) })
         onView(withId(R.id.progressBar)).check(matches(isDisplayed()))
     }
 
     @Test
     @Throws(Exception::class)
     fun render_firstPageTimeOutException() {
-        activityRule.launchActivity(Intent())
-        activityRule.runOnUiThread({
+        fragmentRule.launchActivity(Intent())
+        fragmentRule.runOnUiThread({
             presenterRobot.customRender(HomeViewState.Builder().firstPageError(SocketTimeoutException()).build())
         })
 
@@ -84,8 +83,8 @@ class HomeFragmentTest {
     @Test
     @Throws(Exception::class)
     fun render_firstPageNetworkException() {
-        activityRule.launchActivity(Intent())
-        activityRule.runOnUiThread({
+        fragmentRule.launchActivity(Intent())
+        fragmentRule.runOnUiThread({
             presenterRobot.customRender(HomeViewState.Builder().firstPageError(NetworkErrorException()).build())
         })
         //assert that progressBar is hidden
