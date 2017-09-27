@@ -7,7 +7,8 @@ import javax.inject.Inject
 /**
  * Created by jobinlawrance on 7/9/17.
  */
-class HomeInteractorImpl @Inject constructor(val photoService: PhotoService) : HomeContract.Interactor {
+//TODO("use kotlin allOpen instead of declaring the class open")
+open class HomeInteractorImpl @Inject constructor(val photoService: PhotoService) : HomeContract.Interactor {
 
     override fun getPictures(): Observable<PartialStateChanges> {
         return photoService.getPhotos()
