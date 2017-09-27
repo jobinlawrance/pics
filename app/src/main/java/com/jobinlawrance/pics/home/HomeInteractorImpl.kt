@@ -40,5 +40,4 @@ open class HomeInteractorImpl @Inject constructor(val photoService: PhotoService
         }
     }
 
-    fun getPhotos(): Observable<PartialStateChanges> = Observable.error(Throwable("Blo"))
 }
