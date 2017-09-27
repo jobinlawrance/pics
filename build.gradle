@@ -2,7 +2,7 @@
 
 buildscript {
     ext.versions = [
-            'kotlin'         : '1.1.4-3',
+            'kotlin'         : '1.1.50',
             'constrainLayout': '1.0.2',
             'supportLibrary' : '26.0.2',
             'glide'          : '4.1.1',
@@ -22,7 +22,8 @@ buildscript {
             'daggerMock'     : '0.7.0',
             'okHttp'         : '3.9.0',
             'supportTest'    : '0.5',
-            'hamcrest'       : '1.3'
+            'hamcrest'       : '1.3',
+            'testButler'     : '1.3.1'
     ]
     repositories {
         jcenter()
