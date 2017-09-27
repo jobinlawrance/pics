@@ -36,10 +36,12 @@ dependencies {
 
     androidTestCompile "com.android.support:support-annotations:${versions.supportLibrary}"
     androidTestCompile "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestCompile "com.android.support.test.espresso:espresso-idling-resource:${versions.espresso}"
     androidTestCompile "com.android.support.test:runner:${versions.supportTest}"
     androidTestCompile "com.android.support.test:rules:${versions.supportTest}"
     androidTestCompile "org.hamcrest:hamcrest-library:${versions.hamcrest}"
     androidTestCompile "org.mockito:mockito-android:${versions.mockito}"
+    androidTestCompile "com.linkedin.testbutler:test-butler-library:${versions.testButler}"
     androidTestCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}", {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })

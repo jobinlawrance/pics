@@ -8,6 +8,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Bundle
+import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.timeout.*
 import timber.log.Timber
 import java.net.SocketTimeoutException
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 
@@ -46,6 +48,12 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 
     var timeOutLayout: View? = null
     var networkErrorLayout: ImageView? = null
+
+    private var networkReconnected: AtomicBoolean
+
+    init {
+        networkReconnected = AtomicBoolean(false)
+    }
 
     @Inject
     lateinit var presenter: HomeContract.Presenter
@@ -115,7 +123,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     override fun networkStateIntent(): Observable<Boolean> = networkStateSubject.doOnNext { Timber.d("Network state - $it") }
 
     override fun render(viewState: HomeViewState) {
-        Timber.d("render : %s", viewState)
+        Timber.v("render : %s", viewState)
 
         if (viewState.loadingFirstPage) {
             renderProgress()
@@ -174,6 +182,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 
     private fun renderData(viewState: HomeViewState) {
         progressBar.visibility = View.GONE
+        networkErrorLayout?.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
         homeAdapter.setItems(viewState.data)
     }
@@ -197,6 +206,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     private val connectivityCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             networkStateSubject.onNext(true)
+            networkReconnected.set(true)
         }
 
         override fun onLost(network: Network?) {
@@ -222,5 +232,11 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
                 toolbar.translationZ = -1f
             }
         }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun isNetworkReconnected(): AtomicBoolean {
+        Timber.d("isNetworkReconnected = ${networkReconnected.get()}")
+        return networkReconnected
     }
 }
