@@ -5,6 +5,9 @@ import android.support.v4.app.Fragment
 import com.facebook.stetho.Stetho
 import com.jobinlawrance.pics.BuildConfig
 import com.jobinlawrance.pics.R
+import com.jobinlawrance.pics.di.application.AppComponent
+import com.jobinlawrance.pics.di.application.DaggerAppComponent
+import com.jobinlawrance.pics.di.application.NetModule
 import com.jobinlawrance.pics.di.fragment.FragmentComponentBuilder
 import com.jobinlawrance.pics.di.fragment.HasFragmentSubcomponentBuilders
 import timber.log.Timber

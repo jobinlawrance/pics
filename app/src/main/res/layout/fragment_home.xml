@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.jobinlawrance.pics.extras.WindowInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.jobinlawrance.pics.ui.custom.WindowInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/windowInsetFrameLayout"
     android:layout_width="match_parent"
@@ -45,4 +45,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout="@layout/network_error" />
-</com.jobinlawrance.pics.extras.WindowInsetsFrameLayout>
+</com.jobinlawrance.pics.ui.custom.WindowInsetsFrameLayout>
