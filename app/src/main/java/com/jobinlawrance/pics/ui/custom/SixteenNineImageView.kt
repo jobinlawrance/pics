@@ -5,12 +5,11 @@ import android.content.Context
 import android.os.Build.VERSION_CODES
 import android.util.AttributeSet
 import android.widget.ImageView
-import timber.log.Timber
 
 /**
  * Created by jobinlawrance on 12/9/17.
  */
-class AspectRatioImageView : ImageView {
+class SixteenNineImageView : ImageView {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -21,11 +20,11 @@ class AspectRatioImageView : ImageView {
             : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         //to keep the aspect ratio at 16:9
-        val measuredHeight = (measuredWidth.toDouble() / 1.77777777778).toInt()
-        Timber.d("Width = $measuredWidth Height = $measuredHeight")
-        setMeasuredDimension(measuredWidth, measuredHeight)
+//        val measuredHeight = (measuredWidth.toDouble() / 1.77777777778).toInt()
+
+        val sixteenNineHeight = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec) * 9 / 16, MeasureSpec.EXACTLY)
+        super.onMeasure(widthMeasureSpec, sixteenNineHeight)
     }
 
 }
