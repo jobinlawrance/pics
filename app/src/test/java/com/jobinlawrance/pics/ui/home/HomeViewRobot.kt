@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.ui.home
 
+import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
@@ -27,6 +28,8 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
         override fun loadingFirstPageIntent(): Observable<Boolean> = loadFirstPageSubject
 
         override fun networkStateIntent(): Observable<Boolean> = networkStateSubject
+
+        override fun openDetails(photoResponse: PhotoResponse) {}
     }
 
     init {

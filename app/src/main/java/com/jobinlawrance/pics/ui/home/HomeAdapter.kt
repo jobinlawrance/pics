@@ -17,7 +17,9 @@ import kotlinx.android.synthetic.main.home_viewholder.view.*
 /**
  * Created by jobinlawrance on 12/9/17.
  */
-class HomeAdapter(context: Context) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> Unit) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+
+    private val NO_POSITION = -1
 
     private var items: List<PhotoResponse>? = null
     var shotLoadingPlaceholders: ArrayList<ColorDrawable>
@@ -44,7 +46,7 @@ class HomeAdapter(context: Context) : RecyclerView.Adapter<HomeAdapter.HomeViewH
     override fun getItemCount(): Int = items?.size ?: 0
 
     override fun onBindViewHolder(holder: HomeViewHolder?, position: Int) {
-        holder?.bind(items!![position], position)
+        holder?.bind(items!![position])
     }
 
     fun setItems(items: List<PhotoResponse>) {
@@ -59,7 +61,7 @@ class HomeAdapter(context: Context) : RecyclerView.Adapter<HomeAdapter.HomeViewH
     }
 
     inner class HomeViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        fun bind(photoResponse: PhotoResponse, position: Int) = with(itemView) {
+        fun bind(photoResponse: PhotoResponse) = with(itemView) {
             GlideApp.with(itemView.context)
                     .load(photoResponse.urls?.regular)
                     .centerCrop()
@@ -69,6 +71,15 @@ class HomeAdapter(context: Context) : RecyclerView.Adapter<HomeAdapter.HomeViewH
 
             // need both placeholder & background to prevent seeing through shot as it fades in
             imageView.background = shotLoadingPlaceholders[position % shotLoadingPlaceholders.size]
+
+            imageView.setOnClickListener {
+                val position = adapterPosition
+
+                // since recyclerView is asynchronous there is a possibility the data has been deleted and before recyclerView could
+                // refresh, user clicks on the view
+                if (position != NO_POSITION)
+                    onPhotoClick.invoke(items!!.get(position))
+            }
 
         }
     }

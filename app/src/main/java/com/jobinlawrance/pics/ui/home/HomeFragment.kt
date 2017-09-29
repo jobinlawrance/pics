@@ -2,6 +2,7 @@ package com.jobinlawrance.pics.ui.home
 
 import android.accounts.NetworkErrorException
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.net.ConnectivityManager
 import android.net.Network
@@ -18,6 +19,8 @@ import android.widget.ImageView
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.MyApplication
+import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
+import com.jobinlawrance.pics.ui.detail.DetailActivity
 import com.jobinlawrance.pics.ui.home.dagger.HomeComponent
 import com.jobinlawrance.pics.ui.home.dagger.HomeModule
 import com.jobinlawrance.pics.utils.getActionBarSize
@@ -59,7 +62,7 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
     lateinit var presenter: HomeContract.Presenter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        homeAdapter = HomeAdapter(context)
+        homeAdapter = HomeAdapter(context, this::openDetails)
         gridLayoutManager = GridLayoutManager(activity, resources.getInteger(R.integer.grid_span_size))
         return container?.inflate(R.layout.fragment_home)
     }
@@ -132,6 +135,12 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
         } else {
             renderData(viewState)
         }
+    }
+
+    override fun openDetails(photoResponse: PhotoResponse) {
+        val intent = Intent(activity, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.PHOTO_REPSONSE, photoResponse)
+        context.startActivity(intent)
     }
 
     private fun renderProgress() {

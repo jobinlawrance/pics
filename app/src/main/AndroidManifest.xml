@@ -16,12 +16,13 @@
         <activity
             android:name=".ui.home.HomeActivity"
             android:theme="@style/Pics.Home">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.detail.DetailActivity"></activity>
     </application>
 
 </manifest>
