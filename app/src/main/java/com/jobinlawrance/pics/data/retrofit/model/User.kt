@@ -1,5 +1,10 @@
 package com.jobinlawrance.pics.data.retrofit.model
 
+import android.os.Parcel
+import android.os.Parcelable
+import paperparcel.PaperParcel
+
+@PaperParcel
 data class User(
         val totalPhotos: Int? = null,
         val twitterUsername: String? = null,
@@ -16,4 +21,15 @@ data class User(
         val id: String? = null,
         val firstName: String? = null,
         val username: String? = null
-)
+) : Parcelable {
+    companion object {
+        @JvmField
+        val CREATOR = PaperParcelUser.CREATOR
+    }
+
+    override fun describeContents() = 0
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        PaperParcelUser.writeToParcel(this, dest, flags)
+    }
+}

@@ -75,9 +75,11 @@ dependencies {
     compile "com.jakewharton.timber:timber:${versions.timber}"
     compile "com.facebook.stetho:stetho:${versions.stetho}"
     compile "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
+    compile "nz.bradcampbell:paperparcel:${versions.paperParcel}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    kapt "nz.bradcampbell:paperparcel-compiler:${versions.paperParcel}"
 
     kaptAndroidTest "com.google.dagger:dagger-compiler:${versions.dagger}"
 }
