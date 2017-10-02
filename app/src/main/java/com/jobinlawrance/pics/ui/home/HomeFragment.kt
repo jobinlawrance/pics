@@ -1,6 +1,7 @@
 package com.jobinlawrance.pics.ui.home
 
 import android.accounts.NetworkErrorException
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -12,6 +13,7 @@ import android.os.Bundle
 import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -137,10 +139,12 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
         }
     }
 
-    override fun openDetails(photoResponse: PhotoResponse) {
+    override fun openDetails(photoResponse: PhotoResponse, sharedElementsPair: Pair<View, String>) {
         val intent = Intent(activity, DetailActivity::class.java)
         intent.putExtra(DetailActivity.PHOTO_REPSONSE, photoResponse)
-        context.startActivity(intent)
+        val options = ActivityOptions.makeSceneTransitionAnimation(activity, sharedElementsPair)
+
+        context.startActivity(intent, options.toBundle())
     }
 
     private fun renderProgress() {

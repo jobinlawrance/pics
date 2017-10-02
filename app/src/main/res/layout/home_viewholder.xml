@@ -11,6 +11,6 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
-        android:scaleType="fitCenter" />
+        android:scaleType="centerCrop" />
 
 </LinearLayout>

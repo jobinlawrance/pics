@@ -12,6 +12,7 @@
         <item name="android:textColorSecondary">@color/text_secondary_light</item>
         <item name="android:textColorTertiary">@color/text_secondary_light</item>
         <item name="android:textColorHint">@color/text_hint_light</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="Pics.Home">

@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.ui.home
 
+import android.util.Pair
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import com.jobinlawrance.pics.ui.MviView
@@ -15,9 +16,10 @@ interface HomeContract {
         *  Here we define each intent as Rx Observables
         */
         fun loadingFirstPageIntent(): Observable<Boolean>
+
         fun networkStateIntent(): Observable<Boolean>
 
-        fun openDetails(photoResponse: PhotoResponse)
+        fun openDetails(photoResponse: PhotoResponse, sharedElementsPair: Pair<android.view.View, String>)
     }
 
     interface Interactor {

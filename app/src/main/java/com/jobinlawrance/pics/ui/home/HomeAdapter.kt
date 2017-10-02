@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
+import android.util.Pair
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -17,12 +18,12 @@ import kotlinx.android.synthetic.main.home_viewholder.view.*
 /**
  * Created by jobinlawrance on 12/9/17.
  */
-class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> Unit) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse, sharedElementsPair: Pair<View, String>) -> Unit) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
     private val NO_POSITION = -1
 
     private var items: List<PhotoResponse>? = null
-    var shotLoadingPlaceholders: ArrayList<ColorDrawable>
+    var picLoadingPlaceholders: ArrayList<ColorDrawable>
 
     init {
         val a = context.obtainStyledAttributes(R.styleable.PicsFeed)
@@ -30,12 +31,12 @@ class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> 
                 a.getResourceId(R.styleable.PicsFeed_shotLoadingPlaceholderColors, 0)
         if (loadingColorArrayId !== 0) {
             val placeholderColors = context.resources.getIntArray(loadingColorArrayId)
-            shotLoadingPlaceholders = ArrayList(placeholderColors.size)
+            picLoadingPlaceholders = ArrayList(placeholderColors.size)
             placeholderColors.forEach {
-                shotLoadingPlaceholders.add(ColorDrawable(it))
+                picLoadingPlaceholders.add(ColorDrawable(it))
             }
         } else {
-            shotLoadingPlaceholders = arrayListOf(ColorDrawable(Color.DKGRAY))
+            picLoadingPlaceholders = arrayListOf(ColorDrawable(Color.DKGRAY))
         }
     }
 
@@ -46,7 +47,7 @@ class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> 
     override fun getItemCount(): Int = items?.size ?: 0
 
     override fun onBindViewHolder(holder: HomeViewHolder?, position: Int) {
-        holder?.bind(items!![position])
+        holder?.bind(items!![position], position)
     }
 
     fun setItems(items: List<PhotoResponse>) {
@@ -61,16 +62,18 @@ class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> 
     }
 
     inner class HomeViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        fun bind(photoResponse: PhotoResponse) = with(itemView) {
+        fun bind(photoResponse: PhotoResponse, position: Int) = with(itemView) {
             GlideApp.with(itemView.context)
                     .load(photoResponse.urls?.regular)
                     .centerCrop()
-                    .placeholder(shotLoadingPlaceholders[position % shotLoadingPlaceholders.size])
+                    .placeholder(picLoadingPlaceholders[position % picLoadingPlaceholders.size])
                     .transition(withCrossFade(250))
                     .into(imageView)
 
-            // need both placeholder & background to prevent seeing through shot as it fades in
-            imageView.background = shotLoadingPlaceholders[position % shotLoadingPlaceholders.size]
+            // need both placeholder & background to prevent seeing through image as it fades in
+            imageView.background = picLoadingPlaceholders[position % picLoadingPlaceholders.size]
+
+            imageView.transitionName = photoResponse.id
 
             imageView.setOnClickListener {
                 val position = adapterPosition
@@ -78,7 +81,7 @@ class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse) -> 
                 // since recyclerView is asynchronous there is a possibility the data has been deleted and before recyclerView could
                 // refresh, user clicks on the view
                 if (position != NO_POSITION)
-                    onPhotoClick.invoke(items!!.get(position))
+                    onPhotoClick.invoke(items!!.get(position), Pair.create(imageView, imageView.transitionName))
             }
 
         }

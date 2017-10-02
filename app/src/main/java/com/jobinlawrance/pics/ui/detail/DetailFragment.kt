@@ -1,11 +1,16 @@
 package com.jobinlawrance.pics.ui.detail
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.GlideApp
@@ -51,7 +56,21 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
     override fun render(viewState: PhotoResponse) {
         GlideApp.with(image_view.context)
                 .load(viewState.urls?.regular)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        activity.startPostponedEnterTransition()
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        activity.startPostponedEnterTransition()
+                        return false
+                    }
+                })
+                .dontAnimate()
                 .into(image_view)
+
+        image_view.transitionName = viewState.id
 
         GlideApp.with(user_avatar.context)
                 .load(viewState.user?.profileImage?.medium)

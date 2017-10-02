@@ -10,20 +10,19 @@
     tools:layout_editor_absoluteY="25dp">
 
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.65" />
+    <!--<android.support.constraint.Guideline-->
+    <!--android:id="@+id/guideline"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="horizontal"-->
+    <!--app:layout_constraintGuide_percent="0.65" />-->
 
-    <ImageView
+    <com.jobinlawrance.pics.ui.custom.SixteenNineImageView
         android:id="@+id/image_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:contentDescription="The image"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +37,7 @@
         android:background="@drawable/avatar_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline" />
+        app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
     <TextView
         android:id="@+id/user_name"

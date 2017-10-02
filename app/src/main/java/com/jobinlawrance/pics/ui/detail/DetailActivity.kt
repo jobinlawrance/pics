@@ -21,6 +21,6 @@ class DetailActivity : AppCompatActivity() {
                     .replace(R.id.fragment_container, DetailFragment.newInstance(photoResponse))
                     .commit()
         }
-
+        postponeEnterTransition()
     }
 }
