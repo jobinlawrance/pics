@@ -2,24 +2,25 @@ package com.jobinlawrance.pics.data.retrofit.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import paperparcel.PaperParcel
 
 @PaperParcel
 data class User(
         val totalPhotos: Int? = null,
-        val twitterUsername: String? = null,
-        val lastName: String? = null,
+        @field:Json(name = "twitter_username") val twitterUsername: String? = null,
+        @field:Json(name = "last_name") val lastName: String? = null,
         val bio: String? = null,
-        val totalLikes: Int? = null,
-        val portfolioUrl: String? = null,
-        val profileImage: ProfileImage? = null,
-        val updatedAt: String? = null,
+        @field:Json(name = "total_likes") val totalLikes: Int? = null,
+        @field:Json(name = "portfolio_url") val portfolioUrl: String? = null,
+        @field:Json(name = "profile_image") val profileImage: ProfileImage? = null,
+        @field:Json(name = "updated_at") val updatedAt: String? = null,
         val name: String? = null,
         val location: String? = null,
-        val totalCollections: Int? = null,
+        @field:Json(name = "total_collections") val totalCollections: Int? = null,
         val links: Links? = null,
         val id: String? = null,
-        val firstName: String? = null,
+        @field:Json(name = "first_name") val firstName: String? = null,
         val username: String? = null
 ) : Parcelable {
     companion object {
