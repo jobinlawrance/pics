@@ -2,7 +2,6 @@ package com.jobinlawrance.pics.ui.detail
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 
@@ -17,6 +16,11 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         val photoResponse = intent.getParcelableExtra<PhotoResponse>(PHOTO_REPSONSE)
-        Toast.makeText(this, "Details - ${photoResponse.id}", Toast.LENGTH_SHORT).show()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, DetailFragment.newInstance(photoResponse))
+                    .commit()
+        }
+
     }
 }
