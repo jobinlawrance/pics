@@ -19,6 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
 import kotlinx.android.synthetic.main.fragment_detail.*
+import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass.
@@ -35,6 +36,8 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
      * hence it'll miss out on [photoResponse] if we use [PublishSubject]
      */
     val loadDetailsSubject = ReplaySubject.create<PhotoResponse>()
+
+    var isPhotoReponseLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,33 +56,38 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
     //TODO - use dagger
     override fun createPresenter(): DetailContract.Presenter = DetailPresenterImpl()
 
-    override fun render(viewState: PhotoResponse) {
-        GlideApp.with(image_view.context)
-                .load(viewState.urls?.regular)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        activity.startPostponedEnterTransition()
-                        return false
-                    }
+    override fun render(viewState: DetailViewState) {
+        Timber.d("render - $viewState")
+        if (!isPhotoReponseLoaded) {
+            GlideApp.with(image_view.context)
+                    .load(viewState.photoResponse?.urls?.regular)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            activity.startPostponedEnterTransition()
+                            return false
+                        }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        activity.startPostponedEnterTransition()
-                        return false
-                    }
-                })
-                .dontAnimate()
-                .into(image_view)
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            activity.startPostponedEnterTransition()
+                            return false
+                        }
+                    })
+                    .dontAnimate()
+                    .into(image_view)
 
-        image_view.transitionName = viewState.id
+            image_view.transitionName = viewState.photoResponse?.id
 
-        GlideApp.with(user_avatar.context)
-                .load(viewState.user?.profileImage?.medium)
-                .circleCrop()
-                .placeholder(R.drawable.avatar_placeholder)
-                .transition(withCrossFade())
-                .into(user_avatar)
+            GlideApp.with(user_avatar.context)
+                    .load(viewState.photoResponse?.user?.profileImage?.medium)
+                    .circleCrop()
+                    .placeholder(R.drawable.avatar_placeholder)
+                    .transition(withCrossFade())
+                    .into(user_avatar)
 
-        user_name.text = viewState.user?.name
+            user_name.text = viewState.photoResponse?.user?.name
+
+            isPhotoReponseLoaded = true
+        }
     }
 
     override fun loadDetailsIntent(): Observable<PhotoResponse> = loadDetailsSubject

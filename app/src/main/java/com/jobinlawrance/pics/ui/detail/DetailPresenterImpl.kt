@@ -7,6 +7,8 @@ package com.jobinlawrance.pics.ui.detail
 class DetailPresenterImpl : DetailContract.Presenter() {
     override fun bindIntents() {
         val photoResponseObservable = intent(DetailContract.View::loadDetailsIntent)
+                .map { DetailViewState.Builder().setPhotoResponse(it).build() }
+
         subscribeViewState(photoResponseObservable, DetailContract.View::render)
     }
 }

@@ -9,9 +9,9 @@ import io.reactivex.Observable
  * Created by jobinlawrance on 1/10/17.
  */
 interface DetailContract {
-    interface View : MviView<PhotoResponse> {
+    interface View : MviView<DetailViewState> {
         fun loadDetailsIntent(): Observable<PhotoResponse>
     }
 
-    abstract class Presenter : MviBasePresenter<View, PhotoResponse>()
+    abstract class Presenter : MviBasePresenter<View, DetailViewState>()
 }
