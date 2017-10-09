@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.di.application
 
+import com.jobinlawrance.pics.DownloadServiceImpl
 import com.jobinlawrance.pics.application.MyApplication
 import com.jobinlawrance.pics.di.fragment.FragmentBindingModule
 import dagger.Component
@@ -14,6 +15,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(myApplication: MyApplication)
+    fun inject(downloadServiceImpl: DownloadServiceImpl)
 
     fun getRetrofit(): Retrofit
 }

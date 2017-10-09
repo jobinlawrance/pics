@@ -1,6 +1,7 @@
 package com.jobinlawrance.pics.application
 
 import android.app.Application
+import android.os.StrictMode
 import android.support.v4.app.Fragment
 import com.facebook.stetho.Stetho
 import com.jobinlawrance.pics.BuildConfig
@@ -36,6 +37,10 @@ open class MyApplication : Application(), HasFragmentSubcomponentBuilders {
     override fun onCreate() {
         super.onCreate()
         applicationInstance = this
+
+        //lazy hack to avoid FileUriException TODO - use content:// instead of file://
+        val vmPolicyBuilder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(vmPolicyBuilder.build())
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
