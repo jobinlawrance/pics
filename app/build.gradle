@@ -76,6 +76,7 @@ dependencies {
     compile "com.facebook.stetho:stetho:${versions.stetho}"
     compile "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
     compile "nz.bradcampbell:paperparcel:${versions.paperParcel}"
+    compile "com.github.jobinlawrance:okhttp3-downloadprogress-interceptor:${versions.downloadInterceptor}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"

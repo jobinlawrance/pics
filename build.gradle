@@ -2,29 +2,30 @@
 
 buildscript {
     ext.versions = [
-            'kotlin'         : '1.1.50',
-            'constrainLayout': '1.0.2',
-            'supportLibrary' : '26.1.0',
-            'glide'          : '4.1.1',
-            'retrofit'       : '2.3.0',
-            'dagger'         : '2.11',
-            'rxjava'         : '2.1.3',
-            'rxandroid'      : '2.0.1',
-            'mosby'          : '3.0.4',
-            'timber'         : '4.5.1',
-            'stetho'         : '1.5.0',
-            'paperParcel'    : '2.0.4',
+            'kotlin'             : '1.1.50',
+            'constrainLayout'    : '1.0.2',
+            'supportLibrary'     : '26.1.0',
+            'glide'              : '4.1.1',
+            'retrofit'           : '2.3.0',
+            'dagger'             : '2.11',
+            'rxjava'             : '2.1.3',
+            'rxandroid'          : '2.0.1',
+            'mosby'              : '3.0.4',
+            'timber'             : '4.5.1',
+            'stetho'             : '1.5.0',
+            'paperParcel'        : '2.0.4',
+            'downloadInterceptor': '1.0.1',
 
             //testing
-            'junit'          : '4.12',
-            'espresso'       : '2.2.2',
-            'mockito'        : '2.9.0',
-            'mockitoKotlin'  : '1.5.0',
-            'daggerMock'     : '0.7.0',
-            'okHttp'         : '3.9.0',
-            'supportTest'    : '0.5',
-            'hamcrest'       : '1.3',
-            'testButler'     : '1.3.1'
+            'junit'              : '4.12',
+            'espresso'           : '2.2.2',
+            'mockito'            : '2.9.0',
+            'mockitoKotlin'      : '1.5.0',
+            'daggerMock'         : '0.7.0',
+            'okHttp'             : '3.9.0',
+            'supportTest'        : '0.5',
+            'hamcrest'           : '1.3',
+            'testButler'         : '1.3.1'
     ]
     repositories {
         jcenter()
