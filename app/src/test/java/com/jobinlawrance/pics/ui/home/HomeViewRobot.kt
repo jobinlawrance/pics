@@ -1,5 +1,7 @@
 package com.jobinlawrance.pics.ui.home
 
+import android.util.Pair
+import android.view.View
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -29,7 +31,7 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
 
         override fun networkStateIntent(): Observable<Boolean> = networkStateSubject
 
-        override fun openDetails(photoResponse: PhotoResponse) {}
+        override fun openDetails(photoResponse: PhotoResponse, sharedElementsPair: Pair<View, String>) {}
     }
 
     init {
