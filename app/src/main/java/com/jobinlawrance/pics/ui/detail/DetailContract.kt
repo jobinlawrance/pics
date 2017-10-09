@@ -11,6 +11,8 @@ import io.reactivex.Observable
 interface DetailContract {
     interface View : MviView<DetailViewState> {
         fun loadDetailsIntent(): Observable<PhotoResponse>
+        fun downloadPic(): Observable<Boolean>
+        fun getDownloadStatus(): Observable<String>
     }
 
     abstract class Presenter : MviBasePresenter<View, DetailViewState>()

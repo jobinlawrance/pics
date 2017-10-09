@@ -12,10 +12,12 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.mosby3.mvi.MviFragment
+import com.jobinlawrance.pics.DownloadInteractor
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.GlideApp
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
 import kotlinx.android.synthetic.main.fragment_detail.*
@@ -31,11 +33,14 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
     lateinit var photoResponse: PhotoResponse
 
     /**
-     * Using [ReplaySubject] here is important since we are emitting the [photoResponse] in [onCreate]
+     * Using [ReplaySubject] or [BehaviorSubject] here is important since we are emitting the [photoResponse] in [onCreate]
      * The presenter is not yet created at this point, so it isn't subscribed to [loadDetailsSubject],
      * hence it'll miss out on [photoResponse] if we use [PublishSubject]
      */
     val loadDetailsSubject = ReplaySubject.create<PhotoResponse>()
+    val downloadStatusIntentSubject = BehaviorSubject.create<String>()
+
+    val downloadPicIntentSubject = PublishSubject.create<Boolean>()
 
     var isPhotoReponseLoaded = false
 
@@ -43,7 +48,9 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             photoResponse = arguments.getParcelable(ARG_PARAM1)
+
             loadDetailsSubject.onNext(photoResponse)
+            downloadStatusIntentSubject.onNext(photoResponse.id!!)
         }
     }
 
@@ -53,14 +60,27 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
         return inflater!!.inflate(R.layout.fragment_detail, container, false)
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //TODO - add a runtime permission check for WRITE_EXTERNAL_STORAGE
+        download_button.setOnClickListener {
+            downloadPicIntentSubject.onNext(true)
+        }
+    }
+
     //TODO - use dagger
-    override fun createPresenter(): DetailContract.Presenter = DetailPresenterImpl()
+    override fun createPresenter(): DetailContract.Presenter = DetailPresenterImpl(DownloadInteractor(activity))
+
+    override fun downloadPic(): Observable<Boolean> = downloadPicIntentSubject
+
+    override fun getDownloadStatus(): Observable<String> = downloadStatusIntentSubject
 
     override fun render(viewState: DetailViewState) {
         Timber.d("render - $viewState")
-        if (!isPhotoReponseLoaded) {
+
+        if (!isPhotoReponseLoaded && viewState.isDownloading.not() && viewState.photoResponse != null) {
             GlideApp.with(image_view.context)
-                    .load(viewState.photoResponse?.urls?.regular)
+                    .load(viewState.photoResponse.urls?.regular)
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                             activity.startPostponedEnterTransition()
@@ -75,18 +95,22 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
                     .dontAnimate()
                     .into(image_view)
 
-            image_view.transitionName = viewState.photoResponse?.id
+            image_view.transitionName = viewState.photoResponse.id
 
             GlideApp.with(user_avatar.context)
-                    .load(viewState.photoResponse?.user?.profileImage?.medium)
+                    .load(viewState.photoResponse.user?.profileImage?.medium)
                     .circleCrop()
                     .placeholder(R.drawable.avatar_placeholder)
                     .transition(withCrossFade())
                     .into(user_avatar)
 
-            user_name.text = viewState.photoResponse?.user?.name
+            user_name.text = viewState.photoResponse.user?.name
 
             isPhotoReponseLoaded = true
+        }
+
+        if (viewState.isDownloading) {
+            download_progress.text = String.format("%d %", viewState.downloadProgress)
         }
     }
 
