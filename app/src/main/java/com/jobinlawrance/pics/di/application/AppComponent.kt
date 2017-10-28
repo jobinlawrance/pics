@@ -3,6 +3,7 @@ package com.jobinlawrance.pics.di.application
 import com.jobinlawrance.pics.DownloadServiceImpl
 import com.jobinlawrance.pics.application.MyApplication
 import com.jobinlawrance.pics.di.fragment.FragmentBindingModule
+import com.jobinlawrance.pics.ui.widget.PicsRemoteViewFactory
 import dagger.Component
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -16,6 +17,7 @@ interface AppComponent {
 
     fun inject(myApplication: MyApplication)
     fun inject(downloadServiceImpl: DownloadServiceImpl)
+    fun inject(picsRemoteViewFactory: PicsRemoteViewFactory)
 
     fun getRetrofit(): Retrofit
 }
