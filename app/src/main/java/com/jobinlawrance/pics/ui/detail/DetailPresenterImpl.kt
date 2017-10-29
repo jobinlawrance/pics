@@ -1,9 +1,9 @@
 package com.jobinlawrance.pics.ui.detail
 
 import android.text.format.DateFormat
-import com.jobinlawrance.pics.PicToDownload
 import com.jobinlawrance.pics.businesslogic.download.DownloadInteractor
 import com.jobinlawrance.pics.businesslogic.download.DownloadService
+import com.jobinlawrance.pics.data.PicToDownload
 import com.jobinlawrance.pics.utils.plusAssign
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

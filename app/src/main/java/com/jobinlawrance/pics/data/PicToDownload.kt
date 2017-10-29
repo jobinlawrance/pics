@@ -1,4 +1,4 @@
-package com.jobinlawrance.pics
+package com.jobinlawrance.pics.data
 
 /**
  * Created by jobinlawrance on 6/10/17.

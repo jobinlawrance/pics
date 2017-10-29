@@ -11,10 +11,10 @@ import android.os.Environment
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import com.jobinlawrance.downloadprogressinterceptor.ProgressEventBus
-import com.jobinlawrance.pics.PicToDownload
 import com.jobinlawrance.pics.Queue
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.MyApplication
+import com.jobinlawrance.pics.data.PicToDownload
 import com.jobinlawrance.pics.data.retrofit.services.PhotoService
 import com.jobinlawrance.pics.utils.plusAssign
 import com.jobinlawrance.pics.utils.random
