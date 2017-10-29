@@ -12,9 +12,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.mosby3.mvi.MviFragment
-import com.jobinlawrance.pics.DownloadInteractor
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.GlideApp
+import com.jobinlawrance.pics.businesslogic.download.DownloadInteractor
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject

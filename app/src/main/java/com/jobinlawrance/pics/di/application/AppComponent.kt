@@ -1,7 +1,7 @@
 package com.jobinlawrance.pics.di.application
 
-import com.jobinlawrance.pics.DownloadServiceImpl
 import com.jobinlawrance.pics.application.MyApplication
+import com.jobinlawrance.pics.businesslogic.download.DownloadServiceImpl
 import com.jobinlawrance.pics.di.fragment.FragmentBindingModule
 import com.jobinlawrance.pics.ui.widget.PicsRemoteViewFactory
 import dagger.Component

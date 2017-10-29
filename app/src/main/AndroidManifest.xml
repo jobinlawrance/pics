@@ -26,7 +26,7 @@
         <activity android:name=".ui.detail.DetailActivity" />
 
         <service
-            android:name=".DownloadServiceImpl"
+            android:name=".businesslogic.download.DownloadServiceImpl"
             android:enabled="true"
             android:exported="true" />
 

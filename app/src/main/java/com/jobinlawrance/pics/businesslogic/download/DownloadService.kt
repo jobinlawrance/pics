@@ -1,5 +1,6 @@
-package com.jobinlawrance.pics
+package com.jobinlawrance.pics.businesslogic.download
 
+import com.jobinlawrance.pics.PicToDownload
 import io.reactivex.Observable
 
 /**

@@ -1,4 +1,4 @@
-package com.jobinlawrance.pics
+package com.jobinlawrance.pics.businesslogic.download
 
 import android.content.ComponentName
 import android.content.Context
