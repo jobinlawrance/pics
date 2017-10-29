@@ -3,7 +3,6 @@ package com.jobinlawrance.pics
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.graphics.Color
 import android.net.Uri
 import android.os.Binder
@@ -93,7 +92,7 @@ class DownloadServiceImpl @Inject constructor() : Service(), DownloadService {
      * ref - https://stackoverflow.com/a/11287912/6448823
      *
      * This also means the [onUnbind] method is called only when the first client unbinds.
-     * To overcome this, we return true in [onUnbind] such that for subsequent binds and unbinds [onRebind] and [onBind] is called respectively
+     * To overcome this, we return true in [onUnbind] such that for subsequent binds and unbinds [onRebind] and [onUnbind] is called respectively
      */
     override fun onUnbind(intent: Intent?): Boolean {
         binderCounter--
@@ -170,11 +169,6 @@ class DownloadServiceImpl @Inject constructor() : Service(), DownloadService {
     inner class DownloadBinder : Binder() {
         val service: DownloadServiceImpl
             get() = this@DownloadServiceImpl
-    }
-
-    interface Handler {
-        fun onStart(serviceConnection: ServiceConnection)
-        fun onStop(serviceConnection: ServiceConnection)
     }
 
 

@@ -19,53 +19,48 @@ class DownloadInteractor(activityContext: Context) {
 
     init {
         context = activityContext.applicationContext
-
     }
 
     fun getService(): Observable<DownloadService> {
 
-        return Observable.create<DownloadServiceImpl.Handler>({
-            if (!it.isDisposed) {
-                val handler = object : DownloadServiceImpl.Handler {
-                    override fun onStart(serviceConnection: ServiceConnection) {
-
-                        val intent = Intent(context, DownloadServiceImpl::class.java)
-                        context.startService(intent)
-                        context.bindService(intent, serviceConnection, 0)
-                    }
-
-                    override fun onStop(serviceConnection: ServiceConnection) {
-                        context.unbindService(serviceConnection)
-                    }
-                }
-
-                it.onNext(handler)
-                it.onComplete()
-            }
-        }).flatMap { handler ->
-            Timber.d("Download Handler is created")
-            val serviceSubject = PublishSubject.create<DownloadService>()
-
-            val serviceConnection = object : ServiceConnection {
-                override fun onServiceDisconnected(p0: ComponentName?) {
-                    serviceSubject.onComplete()
-                }
-
-                override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-                    val downloadBinder = p1 as DownloadServiceImpl.DownloadBinder
-                    val downloadService = downloadBinder.service as DownloadService
-                    if (serviceSubject.hasObservers())
-                        serviceSubject.onNext(downloadService)
-                }
+        val serviceHandler = object : IServiceHandler {
+            override fun bind(serviceConnection: ServiceConnection) {
+                val intent = Intent(context, DownloadServiceImpl::class.java)
+                context.startService(intent)
+                context.bindService(intent, serviceConnection, 0)
             }
 
-            Timber.d("Starting the handler + ${serviceConnection.hashCode()}")
-            handler.onStart(serviceConnection) //start the connection
-
-            serviceSubject.doOnDispose {
-                Timber.w("Subscription is being disposed + ${serviceConnection.hashCode()}")
-                handler.onStop(serviceConnection)
+            override fun unBind(serviceConnection: ServiceConnection) {
+                context.unbindService(serviceConnection)
             }
         }
+
+        val serviceSubject = PublishSubject.create<DownloadService>()
+
+        val serviceConnection = object : ServiceConnection {
+            override fun onServiceDisconnected(p0: ComponentName?) {
+                serviceSubject.onComplete()
+            }
+
+            override fun onServiceConnected(p0: ComponentName?, iBinder: IBinder?) {
+                val downloadBinder = iBinder as DownloadServiceImpl.DownloadBinder
+                val downloadService = downloadBinder.service as DownloadService
+                if (serviceSubject.hasObservers())
+                    serviceSubject.onNext(downloadService)
+            }
+        }
+
+        Timber.d("Starting the handler + ${serviceConnection.hashCode()}")
+        serviceHandler.bind(serviceConnection) //start the connection
+
+        return serviceSubject.doOnDispose {
+            Timber.w("Subscription is being disposed + ${serviceConnection.hashCode()}")
+            serviceHandler.unBind(serviceConnection)
+        }
+    }
+
+    interface IServiceHandler {
+        fun bind(serviceConnection: ServiceConnection)
+        fun unBind(serviceConnection: ServiceConnection)
     }
 }
