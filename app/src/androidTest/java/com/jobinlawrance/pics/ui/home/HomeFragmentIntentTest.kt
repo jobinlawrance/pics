@@ -15,6 +15,7 @@ import com.jobinlawrance.pics.MyTestApplication
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.data.mock.MockPhotoResponses
 import com.jobinlawrance.pics.ui.home.dagger.HomeComponent
+import com.jobinlawrance.pics.utils.inputStreamToString
 import com.linkedin.android.testbutler.TestButler
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -59,7 +60,9 @@ class HomeFragmentIntentTest {
         whenever(builder.fragmentModule(any())).thenReturn(builder)
 
         //mocking the homeInteractor
-        whenever(homeInteractor.getPictures()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(MockPhotoResponses.asList())))
+        val inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
+        val mockJsonString = inputStreamToString(inputStream)
+        whenever(homeInteractor.getPictures()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(MockPhotoResponses.asList(mockJsonString!!))))
         whenever(homeInteractor.viewStateReducer(any(), any())).thenCallRealMethod()
 
         val testApplication = InstrumentationRegistry.getTargetContext().applicationContext as MyTestApplication

@@ -5,6 +5,7 @@ import com.jobinlawrance.pics.data.mock.MockPhotoResponses
 import com.jobinlawrance.pics.data.retrofit.services.PhotoService
 import com.jobinlawrance.pics.di.application.DaggerAppComponent
 import com.jobinlawrance.pics.di.application.NetModule
+import com.jobinlawrance.pics.utils.inputStreamToString
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.mockwebserver.MockResponse
@@ -22,12 +23,16 @@ class HomePresenterImplTest {
 
     companion object {
 
+        var mockPhotoResponseJson: String? = null
+
         @JvmStatic
         @BeforeClass
         fun init() {
             // Tell RxAndroid to not use android main ui thread scheduler
             RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
 
+            val inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
+            mockPhotoResponseJson = inputStreamToString(inputStream)
         }
 
         @JvmStatic
@@ -74,7 +79,7 @@ class HomePresenterImplTest {
 
     @Test
     fun testLoadingPage() {
-        mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
+        mockWebServer.enqueue(MockResponse().setBody(mockPhotoResponseJson))
 
 
         val robot = HomeViewRobot(presenter)
@@ -90,7 +95,7 @@ class HomePresenterImplTest {
         // 2. show the items with the first page
 
         val loadingFirstPageState = HomeViewState.Builder().firstPageLoading(true).build()
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList()).build()
+        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
 
         // Check if as expected
         robot.assertViewStateRendered(loadingFirstPageState, firstPage)
@@ -136,7 +141,7 @@ class HomePresenterImplTest {
     @Test
     fun testFirstPageNetworkState() {
 
-        mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
+        mockWebServer.enqueue(MockResponse().setBody(mockPhotoResponseJson))
 
         val robot = HomeViewRobot(presenter)
 
@@ -150,7 +155,7 @@ class HomePresenterImplTest {
 
         val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
 
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList()).build()
+        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
 
         // Asserting the sequence in order
         // 1. First loading
@@ -162,7 +167,7 @@ class HomePresenterImplTest {
 
     @Test
     fun testFirstPageNetworkStateChangePostFirstLoad() {
-        mockWebServer.enqueue(MockResponse().setBody(MockPhotoResponses.jsonString))
+        mockWebServer.enqueue(MockResponse().setBody(mockPhotoResponseJson))
 
         val robot = HomeViewRobot(presenter)
 
@@ -175,7 +180,7 @@ class HomePresenterImplTest {
 
         val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
 
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList()).build()
+        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
 
         robot.assertViewStateRendered(firstPageLoading, firstPage)
     }
