@@ -1,6 +1,9 @@
 package com.jobinlawrance.pics.ui.home
 
 import android.accounts.NetworkErrorException
+import android.app.KeyguardManager
+import android.content.Context
+import android.content.Context.KEYGUARD_SERVICE
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
@@ -8,6 +11,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.runner.AndroidJUnit4
+import android.view.WindowManager
 import com.jobinlawrance.pics.FragmentTestRule
 import com.jobinlawrance.pics.MyTestApplication
 import com.jobinlawrance.pics.R
@@ -62,6 +66,7 @@ class HomeFragmentTest {
     @Throws(Exception::class)
     fun render_firstPageLoading() {
         fragmentRule.launchActivity(null)
+        unlockScreen()
         fragmentRule.runOnUiThread(Runnable { presenterRobot.customRender(HomeViewState.Builder().firstPageLoading(true).build()) })
         onView(withId(R.id.progressBar)).check(matches(isDisplayed()))
     }
@@ -70,6 +75,7 @@ class HomeFragmentTest {
     @Throws(Exception::class)
     fun render_firstPageTimeOutException() {
         fragmentRule.launchActivity(Intent())
+        unlockScreen()
         fragmentRule.runOnUiThread({
             presenterRobot.customRender(HomeViewState.Builder().firstPageError(SocketTimeoutException()).build())
         })
@@ -84,6 +90,7 @@ class HomeFragmentTest {
     @Throws(Exception::class)
     fun render_firstPageNetworkException() {
         fragmentRule.launchActivity(Intent())
+        unlockScreen()
         fragmentRule.runOnUiThread({
             presenterRobot.customRender(HomeViewState.Builder().firstPageError(NetworkErrorException()).build())
         })
@@ -91,5 +98,22 @@ class HomeFragmentTest {
         onView(withId(R.id.progressBar)).check(matches(not(isDisplayed())))
         //check for the network image drawable
         onView(withId(R.id.networkImage)).check(matches(isDisplayed()))
+    }
+
+    fun unlockScreen() {
+        //unlock lockscreen
+        val activity = fragmentRule.activity
+        fragmentRule.runOnUiThread {
+            val mKG = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            val mLock = mKG.newKeyguardLock(KEYGUARD_SERVICE)
+            mLock.disableKeyguard()
+
+            //turn the screen on
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
+        }
     }
 }

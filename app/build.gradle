@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'project-report'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 26
@@ -14,6 +15,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "com.jobinlawrance.pics.PicsTestRunner"
+    }
+    lintOptions {
+        abortOnError false
     }
     buildTypes {
         release {
@@ -28,9 +32,43 @@ android {
         testLogging {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
+        jacoco {
+            includeNoLocationClasses = true
+        }
     }
 
     sourceSets.test.resources.srcDirs += ["src/androidTest/resources"]
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*',
+            // Dagger Generated classes
+            '**/*_MembersInjector.class',
+            '**/Dagger*Component.class', // covers component implementations
+            '**/Dagger*Component$Builder.class', // covers component builders
+            '**/*Module_*Factory.class',
+            '**/*_Factory.class',
+            // Paperparcel
+            '**/PaperParcel*.class',
+            // Glide
+            '**/bumptech/glide/*class',
+            '**/Glide*.class',
+
+    ]
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec'
+    ])
 }
 
 dependencies {
@@ -44,15 +82,11 @@ dependencies {
     androidTestCompile "org.hamcrest:hamcrest-library:${versions.hamcrest}"
     androidTestCompile "org.mockito:mockito-android:${versions.mockito}"
     androidTestCompile "com.linkedin.testbutler:test-butler-library:${versions.testButler}"
-    androidTestCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}", {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-    })
+    androidTestCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}")
 
     testCompile "junit:junit:${versions.junit}"
     testCompile "org.mockito:mockito-core:${versions.mockito}"
-    testCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}", {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-    })
+    testCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}")
     testCompile "com.github.fabioCollini:DaggerMock:${versions.daggerMock}"
     testCompile "com.squareup.okhttp3:mockwebserver:${versions.okHttp}"
 

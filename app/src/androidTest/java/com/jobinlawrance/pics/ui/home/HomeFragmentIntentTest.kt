@@ -1,5 +1,7 @@
 package com.jobinlawrance.pics.ui.home
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
@@ -10,6 +12,7 @@ import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
+import android.view.WindowManager
 import com.jobinlawrance.pics.FragmentTestRule
 import com.jobinlawrance.pics.MyTestApplication
 import com.jobinlawrance.pics.R
@@ -28,6 +31,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnit
 import java.util.concurrent.TimeUnit
+
 
 /**
  * Created by jobinlawrance on 26/9/17.
@@ -79,6 +83,8 @@ class HomeFragmentIntentTest {
         //Launch the app
         fragmentRule.launchActivity(null)
 
+        unlockScreen()
+
         onView(withId(R.id.networkImage)).check(matches(isDisplayed()))
 
         //register idleResource so that espresso waits till network is reconnected
@@ -92,6 +98,23 @@ class HomeFragmentIntentTest {
         onView(withId(R.id.networkImage)).check(matches(not(isDisplayed())))
 
         Espresso.unregisterIdlingResources(idlingResource)
+    }
+
+    fun unlockScreen() {
+        //unlock lockscreen
+        val activity = fragmentRule.activity
+        fragmentRule.runOnUiThread {
+            val mKG = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            val mLock = mKG.newKeyguardLock(Context.KEYGUARD_SERVICE)
+            mLock.disableKeyguard()
+
+            //turn the screen on
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)
+        }
     }
 
 }

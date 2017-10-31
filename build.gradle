@@ -2,7 +2,7 @@
 
 buildscript {
     ext.versions = [
-            'kotlin'             : '1.1.50',
+            'kotlin'             : '1.1.51',
             'constrainLayout'    : '1.0.2',
             'supportLibrary'     : '26.1.0',
             'glide'              : '4.1.1',
@@ -46,6 +46,17 @@ allprojects {
             url "https://maven.google.com"
         }
         maven { url "https://jitpack.io" }
+    }
+}
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            forcedModules = [
+                    "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}",
+                    "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
+            ]
+        }
     }
 }
 
