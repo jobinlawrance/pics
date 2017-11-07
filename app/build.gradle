@@ -37,7 +37,17 @@ android {
         }
     }
 
+    /*
+    * this is to use mock response json files in both unit test and espresso tests
+    * Do not confuse resource with res
+    * resource dir is for java resource files and res is for android resource files
+    */
     sourceSets.test.resources.srcDirs += ["src/androidTest/resources"]
+
+    // adding kotlin dir as source set for all (main, debug, androidTest etc)
+    sourceSets.all { sourceSet ->
+        sourceSet.java.srcDirs += "src/${sourceSet.name}/kotlin"
+    }
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
@@ -48,21 +58,21 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*',
-            // Dagger Generated classes
-            '**/*_MembersInjector.class',
-            '**/Dagger*Component.class', // covers component implementations
-            '**/Dagger*Component$Builder.class', // covers component builders
-            '**/*Module_*Factory.class',
-            '**/*_Factory.class',
-            // Paperparcel
-            '**/PaperParcel*.class',
-            // Glide
-            '**/bumptech/glide/*class',
-            '**/Glide*.class',
+                      // Dagger Generated classes
+                      '**/*_MembersInjector.class',
+                      '**/Dagger*Component.class', // covers component implementations
+                      '**/Dagger*Component$Builder.class', // covers component builders
+                      '**/*Module_*Factory.class',
+                      '**/*_Factory.class',
+                      // Paperparcel
+                      '**/PaperParcel*.class',
+                      // Glide
+                      '**/bumptech/glide/*class',
+                      '**/Glide*.class',
 
     ]
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "$project.projectDir/src/main/java"
+    def mainSrc = "$project.projectDir/src/main/kotlin"
 
     sourceDirectories = files([mainSrc])
     classDirectories = files([debugTree])
