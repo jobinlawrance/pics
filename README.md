@@ -1,4 +1,7 @@
 # Pics <img src="/.github/assets/pics-icon.png" height="36"/>
+[![Build Status](https://travis-ci.org/jobinlawrance/pics.svg?branch=master)](https://travis-ci.org/jobinlawrance/pics)
+[![codecov](https://codecov.io/gh/jobinlawrance/pics/branch/master/graph/badge.svg)](https://codecov.io/gh/jobinlawrance/pics)  
+
 Android app that loads and displays images from unsplash.com
 
 This is one of my hobby projects where I test out new libraries, architectural and design patterns etc. This project is in its infancy right now and nothing much happens in terms of functionality yet.
