@@ -40,9 +40,14 @@ captures/
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+.idea/kotlinc.xml
+.idea/inspectionProfiles/
 
 # Keystore files
 *.jks
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
+
+projectFilesBackup/*
+projectFilesBackup1/.idea/*
