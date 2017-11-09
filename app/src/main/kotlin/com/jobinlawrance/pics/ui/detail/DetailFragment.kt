@@ -1,8 +1,14 @@
 package com.jobinlawrance.pics.ui.detail
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +18,14 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.mosby3.mvi.MviFragment
+import com.jakewharton.rxbinding2.view.RxView
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.GlideApp
 import com.jobinlawrance.pics.businesslogic.download.DownloadInteractor
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
+import com.jobinlawrance.pics.utils.plusAssign
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
@@ -40,9 +49,12 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
     val loadDetailsSubject = ReplaySubject.create<PhotoResponse>()
     val downloadStatusIntentSubject = BehaviorSubject.create<String>()
 
-    val downloadPicIntentSubject = PublishSubject.create<Boolean>()
+    val downloadPicIntentSubject: PublishSubject<Boolean> = PublishSubject.create<Boolean>()
 
     var isPhotoReponseLoaded = false
+
+    lateinit var permissionSubject: PublishSubject<Permission>
+    var disposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +72,28 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
         return inflater!!.inflate(R.layout.fragment_detail, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //TODO - add a runtime permission check for WRITE_EXTERNAL_STORAGE
-        download_button.setOnClickListener {
-            downloadPicIntentSubject.onNext(true)
-        }
+    override fun onStart() {
+        super.onStart()
+        disposable +=
+                RxView.clicks(download_button)
+                        .flatMap { checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, rationaleDialogObservable()) }
+                        .doOnNext {
+                            if (it.revoked)
+                                disposable +=
+                                        settingObservable().subscribe()
+                        }
+                        .subscribe({
+                            if (it.granted)
+                                downloadPicIntentSubject.onNext(true)
+                        }, {
+                            Timber.e(it, "Permission Error")
+                        })
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposable.clear()
     }
 
     //TODO - use dagger
@@ -116,6 +144,95 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
 
     override fun loadDetailsIntent(): Observable<PhotoResponse> = loadDetailsSubject
 
+    private fun checkPermission(permission: String, rationaleDialogObservable: Observable<Boolean>? = null): Observable<Permission> {
+        if (shouldShowRequestPermissionRationale(permission)) {
+            if (rationaleDialogObservable != null) {
+                return rationaleDialogObservable.flatMap {
+                    if (it)
+                        requestPermissionSubject(permission)
+                    else
+                        Observable.just(Permission(false, true, false))
+                }
+            } else {
+                return requestPermissionSubject(permission)
+            }
+        } else
+            return requestPermissionSubject(permission)
+    }
+
+    private fun requestPermissionSubject(permission: String): Observable<Permission> {
+        permissionSubject = PublishSubject.create()
+        requestPermissions(arrayOf(permission), 2)
+        Timber.d("Requesting permission")
+        return permissionSubject
+    }
+
+    private fun settingObservable() =
+            Observable.create<Boolean> { emitter ->
+                val alertDialog =
+                        AlertDialog.Builder(activity)
+                                .setTitle(getString(R.string.permission_title))
+                                .setMessage(getString(R.string.permission_settings_message))
+                                .setPositiveButton(android.R.string.ok, { _, _ ->
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                    val uri = Uri.fromParts("package", activity.packageName, null)
+                                    intent.data = uri
+                                    startActivity(intent)
+                                    emitter.onComplete()
+                                })
+                                .setNegativeButton(android.R.string.cancel, { _, _ ->
+                                    emitter.onNext(false)
+                                    emitter.onComplete()
+                                })
+                                .setCancelable(false)
+                                .create()
+                alertDialog.show()
+
+                emitter.setCancellable {
+                    Timber.e("Dialog is closed")
+                    alertDialog.cancel()
+                }
+            }
+
+    private fun rationaleDialogObservable(): Observable<Boolean> =
+            Observable.create<Boolean> { emitter ->
+                val alertDialog =
+                        AlertDialog.Builder(activity)
+                                .setTitle(getString(R.string.permission_title))
+                                .setMessage(getString(R.string.permission_rationale_message))
+                                .setPositiveButton(android.R.string.ok, { _, _ ->
+                                    emitter.onNext(true)
+                                    emitter.onComplete()
+                                })
+                                .setNegativeButton(android.R.string.cancel, { _, _ ->
+                                    emitter.onNext(false)
+                                    emitter.onComplete()
+                                })
+                                .setCancelable(false)
+                                .create()
+                alertDialog.show()
+
+                emitter.setCancellable {
+                    Timber.e("Dialog is closed")
+                    alertDialog.cancel()
+                }
+            }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Timber.d("Permission granted")
+            permissionSubject.onNext(Permission(true, false, false))
+        } else {
+            //check if permission is revoked
+            if (shouldShowRequestPermissionRationale(permissions[0]))
+                permissionSubject.onNext(Permission(false, true, false))
+            else
+                permissionSubject.onNext(Permission(false, false, true))
+        }
+
+    }
+
     companion object {
         private val ARG_PARAM1 = "param1"
 
@@ -135,4 +252,10 @@ class DetailFragment : MviFragment<DetailContract.View, DetailContract.Presenter
             return fragment
         }
     }
+
+    data class Permission(
+            val granted: Boolean,
+            val denied: Boolean,
+            val revoked: Boolean
+    )
 }

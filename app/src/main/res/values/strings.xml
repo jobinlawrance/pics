@@ -5,4 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="permission_title">Permission</string>
+    <string name="permission_rationale_message">Cannot download without Storage permission</string>
+    <string name="permission_settings_message"><![CDATA[Enable Storage permission from \nPermission > Storage]]></string>
 </resources>

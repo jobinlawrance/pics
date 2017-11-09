@@ -13,6 +13,7 @@
         <item name="android:textColorTertiary">@color/text_secondary_light</item>
         <item name="android:textColorHint">@color/text_hint_light</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="alertDialogTheme">@style/Widget.Pics.AlertDialog</item>
     </style>
 
     <style name="Pics.Home">
@@ -55,6 +56,10 @@
         <item name="android:textColor">@color/text_primary_light</item>
         <item name="android:fontFeatureSettings">smcp</item>
         <item name="android:letterSpacing">0.2</item>
+    </style>
+
+    <style name="Widget.Pics.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:colorAccent">@color/accent</item>
     </style>
 
 </resources>
