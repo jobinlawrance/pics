@@ -16,9 +16,9 @@ import android.view.WindowManager
 import com.jobinlawrance.pics.FragmentTestRule
 import com.jobinlawrance.pics.MyTestApplication
 import com.jobinlawrance.pics.R
-import com.jobinlawrance.pics.data.mock.MockPhotoResponses
 import com.jobinlawrance.pics.ui.home.dagger.HomeComponent
 import com.jobinlawrance.pics.utils.inputStreamToString
+import com.jobinlawrance.pics.utils.photoResponsesFromString
 import com.linkedin.android.testbutler.TestButler
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -66,7 +66,7 @@ class HomeFragmentIntentTest {
         //mocking the homeInteractor
         val inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
         val mockJsonString = inputStreamToString(inputStream)
-        whenever(homeInteractor.getPictures()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(MockPhotoResponses.asList(mockJsonString!!))))
+        whenever(homeInteractor.getPictures()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(photoResponsesFromString(mockJsonString!!))))
         whenever(homeInteractor.viewStateReducer(any(), any())).thenCallRealMethod()
 
         val testApplication = InstrumentationRegistry.getTargetContext().applicationContext as MyTestApplication

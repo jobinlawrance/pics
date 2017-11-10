@@ -1,11 +1,11 @@
 package com.jobinlawrance.pics.ui.home
 
 import android.accounts.NetworkErrorException
-import com.jobinlawrance.pics.data.mock.MockPhotoResponses
 import com.jobinlawrance.pics.data.retrofit.services.PhotoService
 import com.jobinlawrance.pics.di.application.DaggerAppComponent
 import com.jobinlawrance.pics.di.application.NetModule
 import com.jobinlawrance.pics.utils.inputStreamToString
+import com.jobinlawrance.pics.utils.photoResponsesFromString
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 import okhttp3.mockwebserver.MockResponse
@@ -95,7 +95,7 @@ class HomePresenterImplTest {
         // 2. show the items with the first page
 
         val loadingFirstPageState = HomeViewState.Builder().firstPageLoading(true).build()
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
+        val firstPage = HomeViewState.Builder().data(photoResponsesFromString(mockPhotoResponseJson!!)).build()
 
         // Check if as expected
         robot.assertViewStateRendered(loadingFirstPageState, firstPage)
@@ -155,7 +155,7 @@ class HomePresenterImplTest {
 
         val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
 
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
+        val firstPage = HomeViewState.Builder().data(photoResponsesFromString(mockPhotoResponseJson!!)).build()
 
         // Asserting the sequence in order
         // 1. First loading
@@ -180,7 +180,7 @@ class HomePresenterImplTest {
 
         val firstPageLoading = HomeViewState.Builder().firstPageLoading(true).build()
 
-        val firstPage = HomeViewState.Builder().data(MockPhotoResponses.asList(mockPhotoResponseJson!!)).build()
+        val firstPage = HomeViewState.Builder().data(photoResponsesFromString(mockPhotoResponseJson!!)).build()
 
         robot.assertViewStateRendered(firstPageLoading, firstPage)
     }
