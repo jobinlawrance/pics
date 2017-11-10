@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 //TODO - network interruption error handling, runtime permission error handling
-class DownloadServiceImpl @Inject constructor() : Service(), DownloadService {
+class DownloadServiceImpl : Service(), DownloadService {
 
     @Inject lateinit var progressEventBus: ProgressEventBus
     @Inject lateinit var retrofit: Retrofit
@@ -95,7 +95,7 @@ class DownloadServiceImpl @Inject constructor() : Service(), DownloadService {
      * ref - https://stackoverflow.com/a/11287912/6448823
      *
      * This also means the [onUnbind] method is called only when the first client unbinds.
-     * To overcome this, we return true in [onUnbind] such that for subsequent binds and unbinds [onRebind] and [onUnbind] is called respectively
+     * To overcome this, we return true in [onUnbind] so that for subsequent binds and unbinds [onRebind] and [onUnbind] is called respectively
      */
     override fun onUnbind(intent: Intent?): Boolean {
         binderCounter--

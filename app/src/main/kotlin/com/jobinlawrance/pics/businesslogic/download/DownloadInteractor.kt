@@ -23,18 +23,6 @@ class DownloadInteractor(activityContext: Context) {
 
     fun getService(): Observable<DownloadService> {
 
-        val serviceHandler = object : IServiceHandler {
-            override fun bind(serviceConnection: ServiceConnection) {
-                val intent = Intent(context, DownloadServiceImpl::class.java)
-                context.startService(intent)
-                context.bindService(intent, serviceConnection, 0)
-            }
-
-            override fun unBind(serviceConnection: ServiceConnection) {
-                context.unbindService(serviceConnection)
-            }
-        }
-
         val serviceSubject = PublishSubject.create<DownloadService>()
 
         val serviceConnection = object : ServiceConnection {
@@ -50,6 +38,19 @@ class DownloadInteractor(activityContext: Context) {
             }
         }
 
+        // Simple service abstraction to bind and unbind the service
+        val serviceHandler = object : IServiceHandler {
+            override fun bind(serviceConnection: ServiceConnection) {
+                val intent = Intent(context, DownloadServiceImpl::class.java)
+                context.startService(intent)
+                context.bindService(intent, serviceConnection, 0)
+            }
+
+            override fun unBind(serviceConnection: ServiceConnection) {
+                context.unbindService(serviceConnection)
+            }
+        }
+
         Timber.d("Starting the handler + ${serviceConnection.hashCode()}")
         serviceHandler.bind(serviceConnection) //start the connection
 
@@ -59,7 +60,7 @@ class DownloadInteractor(activityContext: Context) {
         }
     }
 
-    interface IServiceHandler {
+    private interface IServiceHandler {
         fun bind(serviceConnection: ServiceConnection)
         fun unBind(serviceConnection: ServiceConnection)
     }
