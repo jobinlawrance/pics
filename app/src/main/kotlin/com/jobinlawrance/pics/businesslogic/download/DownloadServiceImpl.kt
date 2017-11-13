@@ -35,29 +35,24 @@ class DownloadServiceImpl : Service(), DownloadService {
 
     private val binder = DownloadBinder()
     private val downloadQueue = Queue<PicToDownload>()
-    private var isCurrentlyDownloading = false
-
     private val compositeDisposable = CompositeDisposable()
 
-    var binderCounter: Int = 0
-    var currentDownloadCounter = 0
+    private val channelId = "download_channel" // The id of the channel.
+    private val channelName: CharSequence = "Downloads" // The user-visible name of the channel.
+    private val description = "Notification about ongoing downloads" // The user-visible description of the channel.
 
-    // The id of the channel.
-    val channelId = "download_channel"
-    // The user-visible name of the channel.
-    val channelName: CharSequence = "Downloads"
-    // The user-visible description of the channel.
-    val description = "Notification about ongoing downloads"
+    private var binderCounter: Int = 0
+    private var currentDownloadCounter = 0
+    private var isCurrentlyDownloading = false
 
-    lateinit var notificationManager: NotificationManager
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var downloadNotificationBuilder: NotificationCompat.Builder
 
     override fun onCreate() {
         super.onCreate()
         (application as MyApplication).getAppComponent().inject(this)
 
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        setUpNotificationChannel()
+        setUpNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -175,9 +170,18 @@ class DownloadServiceImpl : Service(), DownloadService {
     }
 
 
-    private fun setUpNotificationChannel() {
+    private fun setUpNotification() {
+
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        downloadNotificationBuilder =
+                NotificationCompat.Builder(applicationContext, channelId)
+                        .setSmallIcon(R.drawable.ic_file_download)
+                        .setColor(Color.BLACK)
+                        .setOnlyAlertOnce(true)
+
+        // Setting up notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_LOW
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val notificationChannel = NotificationChannel(channelId, channelName, importance)
             notificationChannel.description = description
             notificationManager.createNotificationChannel(notificationChannel)
@@ -187,17 +191,14 @@ class DownloadServiceImpl : Service(), DownloadService {
     private fun notifyDownloadProgress(downloadStatus: DownloadStatus) {
         val notificationId = 867
 
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
-        notificationBuilder.color = Color.BLACK
-
         if (downloadStatus.progress == 100 && downloadStatus.currentDownloadNumber == downloadStatus.totalNumberOfDownloads) {
             stopForeground(true)
         } else {
-            notificationBuilder.setSmallIcon(R.drawable.ic_file_download)
+            downloadNotificationBuilder
                     .setContentTitle("Downloading - ${downloadStatus.currentDownloadNumber} of ${downloadStatus.totalNumberOfDownloads}")
                     .setContentText("${downloadStatus.progress} %")
                     .setProgress(100, downloadStatus.progress, false)
-            startForeground(notificationId, notificationBuilder.build())
+            startForeground(notificationId, downloadNotificationBuilder.build())
         }
     }
 
