@@ -13,6 +13,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.GlideApp
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
+import com.jobinlawrance.pics.ui.custom.SixteenNineImageView
 import com.jobinlawrance.pics.utils.inflate
 import kotlinx.android.synthetic.main.home_viewholder.view.*
 
@@ -110,10 +111,16 @@ class HomeAdapter(context: Context, val onPhotoClick: (photo: PhotoResponse, sha
     }
 
     class HomeViewHolder(item: View) : RecyclerView.ViewHolder(item) {
+        private val imageView: SixteenNineImageView
+
+        init {
+            imageView = item.imageView
+        }
 
         fun bind(photoResponse: PhotoResponse,
                  position: Int, picLoadingPlaceholders: ArrayList<ColorDrawable>,
-                 onPhotoClick: (photo: PhotoResponse, sharedElementsPair: Pair<View, String>) -> Unit) = with(itemView) {
+                 onPhotoClick: (photo: PhotoResponse, sharedElementsPair: Pair<View, String>) -> Unit) {
+
             GlideApp.with(itemView.context)
                     .load(photoResponse.urls?.regular)
                     .centerCrop()
