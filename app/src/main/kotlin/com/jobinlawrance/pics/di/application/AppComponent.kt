@@ -1,5 +1,6 @@
 package com.jobinlawrance.pics.di.application
 
+import android.support.annotation.VisibleForTesting
 import com.jobinlawrance.pics.application.MyApplication
 import com.jobinlawrance.pics.businesslogic.download.DownloadServiceImpl
 import com.jobinlawrance.pics.di.fragment.FragmentBindingModule
@@ -19,5 +20,6 @@ interface AppComponent {
     fun inject(downloadServiceImpl: DownloadServiceImpl)
     fun inject(picsRemoteViewFactory: PicsRemoteViewFactory)
 
+    @VisibleForTesting
     fun getRetrofit(): Retrofit
 }

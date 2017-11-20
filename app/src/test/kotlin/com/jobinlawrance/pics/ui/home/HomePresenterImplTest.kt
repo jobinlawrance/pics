@@ -1,6 +1,8 @@
 package com.jobinlawrance.pics.ui.home
 
 import android.accounts.NetworkErrorException
+import com.jobinlawrance.pics.data.feed.PhotoFeederImpl
+import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
 import com.jobinlawrance.pics.data.retrofit.services.PhotoService
 import com.jobinlawrance.pics.di.application.DaggerAppComponent
 import com.jobinlawrance.pics.di.application.NetModule
@@ -24,6 +26,7 @@ class HomePresenterImplTest {
     companion object {
 
         var mockPhotoResponseJson: String? = null
+        var secondPageMockPhotoResponseJson: String? = null
 
         @JvmStatic
         @BeforeClass
@@ -31,8 +34,10 @@ class HomePresenterImplTest {
             // Tell RxAndroid to not use android main ui thread scheduler
             RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
 
-            val inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
+            var inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
             mockPhotoResponseJson = inputStreamToString(inputStream)
+            inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses-page2.json")
+            secondPageMockPhotoResponseJson = inputStreamToString(inputStream)
         }
 
         @JvmStatic
@@ -64,7 +69,9 @@ class HomePresenterImplTest {
                         .getRetrofit()
         val mockPhotoService = mockRetrofit.create(PhotoService::class.java)
 
-        presenter = HomePresenterImpl(HomeInteractorImpl(mockPhotoService))
+        val mockPhotoFeeder = PhotoFeederImpl(mockPhotoService)
+
+        presenter = HomePresenterImpl(HomeInteractorImpl(mockPhotoFeeder))
     }
 
     @After
@@ -183,6 +190,44 @@ class HomePresenterImplTest {
         val firstPage = HomeViewState.Builder().data(photoResponsesFromString(mockPhotoResponseJson!!)).build()
 
         robot.assertViewStateRendered(firstPageLoading, firstPage)
+    }
+
+    @Test
+    fun testNextPageLoadingSuccess() {
+        mockWebServer.enqueue(MockResponse().setBody(mockPhotoResponseJson))
+
+        val robot = HomeViewRobot(presenter)
+        robot.fireLoadFirstPageIntent()
+
+        val loadingFirstPageState = HomeViewState.Builder()
+                .firstPageLoading(true).build()
+        val firstPageState = HomeViewState.Builder()
+                .data(photoResponsesFromString(mockPhotoResponseJson!!)).build()
+
+        // Check if as expected
+        robot.assertViewStateRendered(loadingFirstPageState, firstPageState)
+
+        mockWebServer.enqueue(MockResponse().setBody(secondPageMockPhotoResponseJson))
+        robot.fireNextLoadingPageIntent()
+
+        val nextPageLoadingState = HomeViewState.Builder(firstPageState)
+                .nextPageLoading(true).build()
+
+        val dataWithSecondPage:ArrayList<PhotoResponse> = ArrayList()
+        dataWithSecondPage.addAll(firstPageState.data)
+        dataWithSecondPage.addAll(photoResponsesFromString(secondPageMockPhotoResponseJson!!))
+
+        val nextPageLoadedState =
+                HomeViewState.Builder()
+                        .data(dataWithSecondPage).build()
+
+        robot.assertViewStateRendered(loadingFirstPageState,firstPageState,nextPageLoadingState,nextPageLoadedState)
+
+    }
+
+    @Test
+    fun testNextPageLoadingError() {
+//        TODO("not implemented")
     }
 
 }

@@ -10,12 +10,14 @@ import org.junit.Assert
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /**
  * Created by jobinlawrance on 8/9/17.
  */
 class HomeViewRobot(val presenter: HomeContract.Presenter) {
     private val loadFirstPageSubject = PublishSubject.create<Boolean>()
+    private val loadNextPageSubject = PublishSubject.create<Boolean>()
     private val networkStateSubject = PublishSubject.create<Boolean>()
 
     private val renderEventSubject = ReplaySubject.create<HomeViewState>()
@@ -28,6 +30,8 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
         }
 
         override fun loadingFirstPageIntent(): Observable<Boolean> = loadFirstPageSubject
+
+        override fun loadNextPageIntent(): Observable<Boolean> = loadNextPageSubject
 
         override fun networkStateIntent(): Observable<Boolean> = networkStateSubject
 
@@ -42,6 +46,8 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
 
     fun fireNetworkStateIntent(connected: Boolean) = networkStateSubject.onNext(connected)
 
+    fun fireNextLoadingPageIntent() = loadNextPageSubject.onNext(true)
+
     fun assertViewStateRendered(vararg expectedHomeViewStates: HomeViewState) {
 
         if (expectedHomeViewStates == null) {
@@ -49,8 +55,22 @@ class HomeViewRobot(val presenter: HomeContract.Presenter) {
         }
 
         val eventsCount = expectedHomeViewStates.size
+
+        // Wait for few seconds to ensure that no more render events have occurred
+        // If a timeout exception is encountered it means we are waiting for a render viewState that is not going to happen
+        // or something else went wrong in mosby  ¯\_(ツ)_/¯
         renderEventSubject.take(eventsCount.toLong())
                 .timeout(10, TimeUnit.SECONDS)
+                .onErrorResumeNext { t: Throwable ->
+                    if (t is TimeoutException) {
+                        Assert.fail("Expected $eventsCount but there were only ${renderEventSubject.values.size} events in total, "
+                                + "which is less than expected : ${arrayToString(renderEventSubject.values)}")
+                        Observable.empty<HomeViewState>()
+                    } else {
+                        Observable.error(t)
+                    }
+
+                }
                 .blockingSubscribe()
 
         if (renderEventSubject.values.size > eventsCount) {
