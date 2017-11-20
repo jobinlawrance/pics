@@ -1,5 +1,7 @@
 package com.jobinlawrance.pics.ui.home.dagger
 
+import com.jobinlawrance.pics.data.feed.PhotoFeeder
+import com.jobinlawrance.pics.data.feed.PhotoFeederImpl
 import com.jobinlawrance.pics.data.retrofit.services.PhotoService
 import com.jobinlawrance.pics.di.fragment.FragmentModule
 import com.jobinlawrance.pics.ui.home.HomeContract
@@ -18,8 +20,12 @@ import retrofit2.Retrofit
 class HomeModule(homeFragment: HomeFragment) : FragmentModule<HomeFragment>(homeFragment) {
 
     @Provides
-    fun provideInteractor(retrofit: Retrofit): HomeContract.Interactor
-            = HomeInteractorImpl(retrofit.create(PhotoService::class.java))
+    fun providePhotoFeeder(retrofit: Retrofit): PhotoFeeder =
+            PhotoFeederImpl(retrofit.create(PhotoService::class.java))
+
+    @Provides
+    fun provideInteractor(photoFeeder: PhotoFeeder): HomeContract.Interactor
+            = HomeInteractorImpl(photoFeeder)
 
     @Provides
     fun providePresenter(interactor: HomeContract.Interactor): HomeContract.Presenter

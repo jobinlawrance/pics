@@ -66,7 +66,7 @@ class HomeFragmentIntentTest {
         //mocking the homeInteractor
         val inputStream = this::class.java.classLoader.getResourceAsStream("photo-responses.json")
         val mockJsonString = inputStreamToString(inputStream)
-        whenever(homeInteractor.getPictures()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(photoResponsesFromString(mockJsonString!!))))
+        whenever(homeInteractor.loadFirstPage()).thenReturn(Observable.just(PartialStateChanges.FirstPageLoaded(photoResponsesFromString(mockJsonString!!))))
         whenever(homeInteractor.viewStateReducer(any(), any())).thenCallRealMethod()
 
         val testApplication = InstrumentationRegistry.getTargetContext().applicationContext as MyTestApplication

@@ -39,15 +39,21 @@ class HomePresenterImpl @Inject constructor(private val interactor: HomeContract
                 .flatMap {
                     if (it) {
                         isFirstPageLoaded = true
-                        interactor.getPictures()
+                        interactor.loadFirstPage()
                     } else
                         Observable.just(PartialStateChanges.FirstPageError(NetworkErrorException("No Internet")))
                 }
 
+        val loadNextPage =
+                intent(HomeContract.View::loadNextPageIntent)
+                        .doOnNext { Timber.d("intent: On Next is called") }
+                        .flatMap { interactor.loadNextPage() }
+
+
         val initialState = HomeViewState.Builder().firstPageLoading(true).build()
 
         val allIntentsObservable: Observable<PartialStateChanges> =
-                loadFirstPage
+                Observable.merge(loadFirstPage, loadNextPage)
                         .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(

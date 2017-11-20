@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.hannesdorfmann.mosby3.mvi.MviFragment
+import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView
 import com.jobinlawrance.pics.R
 import com.jobinlawrance.pics.application.MyApplication
 import com.jobinlawrance.pics.data.retrofit.model.PhotoResponse
@@ -125,10 +126,21 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
 //                    .startWith(true)
                     .doAfterNext { Timber.d("First Page Loaded") }
 
+    override fun loadNextPageIntent(): Observable<Boolean> {
+        return RxRecyclerView.scrollStateChanges(recyclerView)
+                .filter { !homeAdapter.isloadingNextPage }
+//                .filter { it == RecyclerView.SCROLL_STATE_IDLE }
+                .filter { gridLayoutManager.findLastCompletelyVisibleItemPosition() == homeAdapter.itemCount - 1 }
+                .map { true }
+    }
+
     override fun networkStateIntent(): Observable<Boolean> = networkStateSubject.doOnNext { Timber.d("Network state - $it") }
 
     override fun render(viewState: HomeViewState) {
         Timber.v("render : %s", viewState)
+
+        val loadMoreChanged = homeAdapter.setNextPageLoading(viewState.loadingNextPage)
+        Timber.v("loadMoreChanged - $loadMoreChanged")
 
         if (viewState.loadingFirstPage) {
             renderProgress()
@@ -136,6 +148,11 @@ class HomeFragment : MviFragment<HomeContract.View, HomeContract.Presenter>(), H
             renderFirstPageError(viewState.firstPageError)
         } else {
             renderData(viewState)
+        }
+
+        if (loadMoreChanged && homeAdapter.isloadingNextPage) {
+            recyclerView.scrollToPosition(homeAdapter.itemCount - 1)
+            Timber.d("Scroll to position = ${homeAdapter.itemCount}")
         }
     }
 

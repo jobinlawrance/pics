@@ -6,6 +6,8 @@
     <dimen name="margin_m">8dp</dimen>
     <dimen name="margin_l">12dp</dimen>
     <dimen name="margin_xl">16dp</dimen>
+    <dimen name="margin_xxl">24dp</dimen>
+    <dimen name="margin_xxxl">32dp</dimen>
 
     <!--avatar-->
     <dimen name="avatar_size">60dp</dimen>

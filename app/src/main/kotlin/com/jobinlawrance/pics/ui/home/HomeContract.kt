@@ -17,13 +17,16 @@ interface HomeContract {
         */
         fun loadingFirstPageIntent(): Observable<Boolean>
 
+        fun loadNextPageIntent(): Observable<Boolean>
+
         fun networkStateIntent(): Observable<Boolean>
 
         fun openDetails(photoResponse: PhotoResponse, sharedElementsPair: Pair<android.view.View, String>)
     }
 
     interface Interactor {
-        fun getPictures(): Observable<PartialStateChanges>
+        fun loadFirstPage(): Observable<PartialStateChanges>
+        fun loadNextPage(): Observable<PartialStateChanges>
         fun viewStateReducer(previousState: HomeViewState, partialStateChanges: PartialStateChanges): HomeViewState
     }
 
