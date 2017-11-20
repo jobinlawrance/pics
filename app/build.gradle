@@ -93,12 +93,14 @@ dependencies {
     androidTestCompile "org.mockito:mockito-android:${versions.mockito}"
     androidTestCompile "com.linkedin.testbutler:test-butler-library:${versions.testButler}"
     androidTestCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}")
+    androidTestCompile "com.github.brianPlummer:tinydancer-noop:${versions.tinydancer}"
 
     testCompile "junit:junit:${versions.junit}"
     testCompile "org.mockito:mockito-core:${versions.mockito}"
     testCompile("com.nhaarman:mockito-kotlin:${versions.mockitoKotlin}")
     testCompile "com.github.fabioCollini:DaggerMock:${versions.daggerMock}"
     testCompile "com.squareup.okhttp3:mockwebserver:${versions.okHttp}"
+    testCompile "com.github.brianPlummer:tinydancer-noop:${versions.tinydancer}"
 
     compile "com.android.support:appcompat-v7:${versions.supportLibrary}"
     compile "com.android.support:recyclerview-v7:${versions.supportLibrary}"
@@ -125,6 +127,9 @@ dependencies {
     compile "com.facebook.stetho:stetho-okhttp3:${versions.stetho}"
     compile "nz.bradcampbell:paperparcel:${versions.paperParcel}"
     compile "com.github.jobinlawrance:okhttp3-downloadprogress-interceptor:${versions.downloadInterceptor}"
+
+    debugCompile "com.github.brianPlummer:tinydancer:${versions.tinydancer}"
+    releaseCompile "com.github.brianPlummer:tinydancer-noop:${versions.tinydancer}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"

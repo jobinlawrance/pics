@@ -2,7 +2,7 @@
 
 buildscript {
     ext.versions = [
-            'kotlin'             : '1.1.51',
+            'kotlin'             : '1.1.60',
             'constrainLayout'    : '1.0.2',
             'supportLibrary'     : '26.1.0',
             'glide'              : '4.1.1',
@@ -16,6 +16,7 @@ buildscript {
             'stetho'             : '1.5.0',
             'paperParcel'        : '2.0.4',
             'downloadInterceptor': '1.0.1',
+            'tinydancer'         : '0.1.2',
 
             //testing
             'junit'              : '4.12',

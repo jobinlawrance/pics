@@ -3,6 +3,7 @@ package com.jobinlawrance.pics.application
 import android.app.Application
 import android.os.StrictMode
 import android.support.v4.app.Fragment
+import com.codemonkeylabs.fpslibrary.TinyDancer
 import com.facebook.stetho.Stetho
 import com.jobinlawrance.pics.BuildConfig
 import com.jobinlawrance.pics.R
@@ -45,6 +46,20 @@ open class MyApplication : Application(), HasFragmentSubcomponentBuilders {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
             Stetho.initializeWithDefaults(this)
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectAll()   // or .detectAll() for all detectable problems
+                    .penaltyLog()
+                    .build())
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .build())
+
+            TinyDancer.create()
+                    .show(applicationContext)
         } else {
             Timber.plant(ReleaseTree())
         }
