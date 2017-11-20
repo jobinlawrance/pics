@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="Pics" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/accent</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:textColorPrimary">@color/text_primary_light</item>

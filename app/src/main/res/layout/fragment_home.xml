@@ -29,7 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:clickable="true"
-        android:indeterminateTint="?android:colorAccent"
         android:visibility="gone"
         tools:visibility="visible" />
 
