@@ -20,7 +20,7 @@ Create a values resource file keys.xml at app/src/main/res/values/ and add your 
 ```
 ### Features
 #### Complete
-1. Single Page Home Screen
+1. Home Screen with Pagination
 1. Image Downloading
 
 #### Ongoing
