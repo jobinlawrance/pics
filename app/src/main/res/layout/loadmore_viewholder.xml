@@ -8,5 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/margin_xxxl"
-        android:layout_marginTop="@dimen/margin_xl" />
+        android:layout_marginTop="@dimen/margin_xl"
+        android:indeterminateTint="@color/primary_light"
+        android:indeterminateTintMode="src_in" />
 </FrameLayout>
